@@ -6,7 +6,7 @@ Below you can find the API documentation.
 
 ## Player Events
 
-Events triggered by the player
+Events triggered by the player.
 
 ### environmentChanged
 
@@ -23,7 +23,7 @@ Sends environment variables to the gadget once immediately after receiving `star
 
 ### attributesChanged
 
-Delivering the initial or updated set of attributes (PUT)
+Delivering the initial or updated set of attributes (PUT).
 
 ```
 {
@@ -37,7 +37,7 @@ Delivering the initial or updated set of attributes (PUT)
 
 ### learnerStateChanged
 
-Delivering the initial or updated learner state (PUT)
+Delivering the initial or updated learner state (PUT).
 
 ```
 {
@@ -64,7 +64,7 @@ Indicate changed editability of the gadget. Sent once before `attached` and then
 
 ### attached
 
-Ready to render - sent after all 'bootstrapping' attribute events
+Ready to render - sent after all 'bootstrapping' attribute events.
 
 ```
 {
@@ -74,7 +74,7 @@ Ready to render - sent after all 'bootstrapping' attribute events
 
 ### detached
 
-Gadget has been removed from the DOM
+Gadget has been removed from the DOM.
 
 ```
 {
@@ -84,7 +84,7 @@ Gadget has been removed from the DOM
 
 ## Gadget Events
 
-Events triggered by gadgets
+Events triggered by gadgets.
 
 ### startListening
 
@@ -98,7 +98,7 @@ Reports to the player, that gadget is ready to receive events. Player responds w
 
 ### setAttributes
 
-Persisting an updated set of attributes (PATCH). Player replies with the confirmation message `attributesChanged`
+Persisting an updated set of attributes (PATCH). Player replies with the confirmation message `attributesChanged`.
 
 ```
 {
@@ -112,7 +112,7 @@ Persisting an updated set of attributes (PATCH). Player replies with the confirm
 
 ### setLearnerState
 
-Persisting an updated set of learner attributes (PATCH). Player replies with the confirmation message `learnerStateChanged`
+Persisting an updated set of learner attributes (PATCH). Player replies with the confirmation message `learnerStateChanged`.
 
 ```
 {
@@ -126,7 +126,7 @@ Persisting an updated set of learner attributes (PATCH). Player replies with the
 
 ### setHeight
 
-Adjust the height of the gadget
+Adjust the height of the gadget.
 
 ```
 {
@@ -139,7 +139,7 @@ Adjust the height of the gadget
 
 ### setPropertySheetAttributes
 
-Define an updated property sheet schema
+Define an updated property sheet schema.
 
 ```
 {
@@ -161,7 +161,7 @@ Define an updated property sheet schema
 
 ### setEmpty
 
-Set the emptiness (placeholder) status of the gadget
+Set the emptiness (placeholder) status of the gadget.
 
 ```
 {
@@ -203,7 +203,7 @@ Throw a rendering-time error.
 
 ### changeBlocking
 
-Indicate a potential change in lesson blocked-ness (e.g. after an assessment is submitted)
+Indicate a potential change in lesson blocked-ness (e.g. after an assessment is submitted).
 
 ```
 {
@@ -229,11 +229,11 @@ Request a new asset from a user. When delivered, it will be saved in the field g
 
 ## Player Events
 
-Events triggered by the player
+Events triggered by the player.
 
 ### challengesChanged
 
-Delivering the initial or updated set of challenges (PATCH)
+Delivering the initial or updated set of challenges (PATCH).
 
 ```
 {
@@ -246,7 +246,7 @@ Delivering the initial or updated set of challenges (PATCH)
 
 ### scoresChanged
 
-Delivering the initial or updated learner scores (PATCH)
+Delivering the initial or updated learner scores (PATCH).
 
 ```
 {
@@ -261,7 +261,7 @@ Delivering the initial or updated learner scores (PATCH)
 
 ## Gadget Events
 
-Events triggered by gadgets
+Events triggered by gadgets.
 
 ### setChallenges
 
