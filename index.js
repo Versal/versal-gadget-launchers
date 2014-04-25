@@ -119,7 +119,7 @@ P.onGetPath = function(data) {
 };
 
 window.addEventListener('message', function(e){
-  var iframes = document.querySelectorAll('versal-launcher > iframe');
+  var iframes = document.querySelectorAll('versal-iframe-launcher > iframe');
   Array.prototype.forEach.call(iframes, function(iframe){
     if(iframe.contentWindow == e.source) {
       iframe.dispatchEvent(new CustomEvent('message', { detail: e.data }));
@@ -127,4 +127,4 @@ window.addEventListener('message', function(e){
   })
 });
 
-document.registerElement('versal-launcher', { prototype: P });
+document.registerElement('versal-iframe-launcher', { prototype: P });
