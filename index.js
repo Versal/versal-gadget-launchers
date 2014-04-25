@@ -64,11 +64,10 @@ P.handleMessage = function(e){
 
     var handler = this.messageHandlers[event];
     if(handler) {
-      return handler.call(this, data);
+      handler.call(this, data);
     } else {
-      // Can't handle that, re-translating event
-      var evt = new CustomEvent(event, { detail: data, bubbles: true });
-      this.dispatchEvent(evt);
+      console.error('Unknown event received: ' + event);
+      this.fireEvent('error', {message: 'Unknown event received: ' + event});
     }
   }
 };
@@ -80,6 +79,11 @@ P.sendMessage = function(event, data){
     this.iframe.contentWindow.postMessage(message, '*');
     console.log('↘', message.event, message.data);
   }
+};
+
+P.fireEvent = function(event, data) {
+  var evt = new CustomEvent(event, { detail: data, bubbles: true });
+  this.dispatchEvent(evt);
 };
 
 P.messageHandlers = {
@@ -117,7 +121,14 @@ P.messageHandlers = {
       var url = assetUrlTemplate.replace('<%= id %>', data.assetId );
       this.sendMessage('setPath', { url: url});
     }
-  }
+  },
+
+  setPropertySheetAttributes: function(data) { this.fireEvent('setPropertySheetAttributes', data); },
+  setEmpty: function(data) { this.fireEvent('setEmpty', data); },
+  track: function(data) { this.fireEvent('track', data); },
+  error: function(data) { this.fireEvent('error', data); },
+  changeBlocking: function(data) { this.fireEvent('changeBlocking', data); },
+  requestAsset: function(data) { this.fireEvent('requestAsset', data); }
 };
 
 window.addEventListener('message', function(e){
