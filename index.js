@@ -5,7 +5,7 @@ var patch = function(a, b) {
   return a;
 };
 
-var P = Object.create(HTMLElement.prototype, {
+var prototype = Object.create(HTMLElement.prototype, {
   editable: {
     get: function(){ return this.getAttribute('editable') == 'true'; }
   },
@@ -23,12 +23,12 @@ var P = Object.create(HTMLElement.prototype, {
   }
 });
 
-P.readAttributeAsJson = function(name) {
+prototype.readAttributeAsJson = function(name) {
   if(!this.hasAttribute(name)) { return {}; };
   return JSON.parse(this.getAttribute(name));
 };
 
-P.attachedCallback = function(){
+prototype.attachedCallback = function(){
   console.log('attached');
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.getAttribute('src');
@@ -37,7 +37,7 @@ P.attachedCallback = function(){
   this.appendChild(this.iframe);
 };
 
-P.attributeChangedCallback = function(name, old, value){
+prototype.attributeChangedCallback = function(name, old, value){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
@@ -55,7 +55,7 @@ P.attributeChangedCallback = function(name, old, value){
   }
 };
 
-P.handleMessage = function(e){
+prototype.handleMessage = function(e){
   if(e.detail.event) {
     var event = e.detail.event;
     var data = e.detail.data;
@@ -72,7 +72,7 @@ P.handleMessage = function(e){
   }
 };
 
-P.sendMessage = function(event, data){
+prototype.sendMessage = function(event, data){
   var message = { event: event };
   if(data) { message.data = data; }
   if(this.iframe && this.iframe.contentWindow) {
@@ -81,12 +81,12 @@ P.sendMessage = function(event, data){
   }
 };
 
-P.fireEvent = function(event, data) {
+prototype.fireEvent = function(event, data) {
   var evt = new CustomEvent(event, { detail: data, bubbles: true });
   this.dispatchEvent(evt);
 };
 
-P.messageHandlers = {
+prototype.messageHandlers = {
   startListening: function(){
     this.sendMessage('environmentChanged', this.env);
     this.sendMessage('attributesChanged', this.config);
@@ -140,4 +140,4 @@ window.addEventListener('message', function(e){
   });
 });
 
-document.registerElement('versal-iframe-launcher', { prototype: P });
+document.registerElement('versal-iframe-launcher', { prototype: prototype });
