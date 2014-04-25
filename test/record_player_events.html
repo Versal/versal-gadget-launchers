@@ -1,0 +1,7 @@
+<script>
+  window.addEventListener('message', function(event) {
+    window.parent.recordPlayerEvent(event.data);
+  });
+
+  window.parent.postMessage({ event: 'startListening' }, '*');
+</script>

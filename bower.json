@@ -12,5 +12,10 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "devDependencies": {
+    "mocha": "~1.18",
+    "chai": "~1.9",
+    "versal-runtime": "Versal/versal-runtime"
+  }
 }
