@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "test": "mocha-browser test/index.html"
+  },
+  "devDependencies": {
+    "mocha-browser": "^0.2.0"
+  }
+}
