@@ -55,25 +55,25 @@ prototype.attributeChangedCallback = function(name, old, value){
   }
 };
 
-prototype.handleMessage = function(e){
-  if(e.detail.event) {
-    var event = e.detail.event;
-    var data = e.detail.data;
+prototype.handleMessage = function(event) {
+  if(event.detail.event) {
+    var eventName = event.detail.event;
+    var data = event.detail.data;
 
-    console.log('↖', event, data);
+    console.log('↖', eventName, data);
 
-    var handler = this.messageHandlers[event];
+    var handler = this.messageHandlers[eventName];
     if(handler) {
       handler.call(this, data);
     } else {
-      console.error('Unknown event received: ' + event);
-      this.fireEvent('error', {message: 'Unknown event received: ' + event});
+      console.error('Unknown event received: ' + eventName);
+      this.fireEvent('error', {message: 'Unknown event received: ' + eventName});
     }
   }
 };
 
-prototype.sendMessage = function(event, data){
-  var message = { event: event };
+prototype.sendMessage = function(eventName, data) {
+  var message = { event: eventName };
   if(data) { message.data = data; }
   if(this.iframe && this.iframe.contentWindow) {
     this.iframe.contentWindow.postMessage(message, '*');
@@ -81,8 +81,8 @@ prototype.sendMessage = function(event, data){
   }
 };
 
-prototype.fireEvent = function(event, data) {
-  var evt = new CustomEvent(event, { detail: data, bubbles: true });
+prototype.fireEvent = function(eventName, data) {
+  var evt = new CustomEvent(eventName, { detail: data, bubbles: true });
   this.dispatchEvent(evt);
 };
 
