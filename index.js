@@ -1,8 +1,8 @@
-var patch = function(a, b) {
-  Object.keys(b).forEach(function(key){
-    a[key] = b[key];
+var patch = function(to, from) {
+  Object.keys(from).forEach(function(key){
+    to[key] = from[key];
   });
-  return a;
+  return to;
 };
 
 var prototype = Object.create(HTMLElement.prototype, {
@@ -24,7 +24,7 @@ var prototype = Object.create(HTMLElement.prototype, {
 });
 
 prototype.readAttributeAsJson = function(name) {
-  if(!this.hasAttribute(name)) { return {}; };
+  if(!this.hasAttribute(name)) { return {}; }
   return JSON.parse(this.getAttribute(name));
 };
 
@@ -37,7 +37,7 @@ prototype.attachedCallback = function(){
   this.appendChild(this.iframe);
 };
 
-prototype.attributeChangedCallback = function(name, old, value){
+prototype.attributeChangedCallback = function(name){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
@@ -67,7 +67,7 @@ prototype.handleMessage = function(event) {
       handler.call(this, data);
     } else {
       console.error('Unknown event received: ' + eventName);
-      this.fireEvent('error', {message: 'Unknown event received: ' + eventName});
+      this.fireCustomEvent('error', {message: 'Unknown event received: ' + eventName});
     }
   }
 };
@@ -81,7 +81,7 @@ prototype.sendMessage = function(eventName, data) {
   }
 };
 
-prototype.fireEvent = function(eventName, data) {
+prototype.fireCustomEvent = function(eventName, data) {
   var evt = new CustomEvent(eventName, { detail: data, bubbles: true });
   this.dispatchEvent(evt);
 };
@@ -123,19 +123,19 @@ prototype.messageHandlers = {
     }
   },
 
-  setPropertySheetAttributes: function(data) { this.fireEvent('setPropertySheetAttributes', data); },
-  setEmpty: function(data) { this.fireEvent('setEmpty', data); },
-  track: function(data) { this.fireEvent('track', data); },
-  error: function(data) { this.fireEvent('error', data); },
-  changeBlocking: function(data) { this.fireEvent('changeBlocking', data); },
-  requestAsset: function(data) { this.fireEvent('requestAsset', data); }
+  setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
+  setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
+  track: function(data) { this.fireCustomEvent('track', data); },
+  error: function(data) { this.fireCustomEvent('error', data); },
+  changeBlocking: function(data) { this.fireCustomEvent('changeBlocking', data); },
+  requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); }
 };
 
-window.addEventListener('message', function(e){
+window.addEventListener('message', function(event){
   var iframes = document.querySelectorAll('versal-iframe-launcher > iframe');
   Array.prototype.forEach.call(iframes, function(iframe){
-    if(iframe.contentWindow == e.source) {
-      iframe.dispatchEvent(new CustomEvent('message', { detail: e.data }));
+    if(iframe.contentWindow == event.source) {
+      iframe.dispatchEvent(new CustomEvent('message', { detail: event.data }));
     }
   });
 });
