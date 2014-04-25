@@ -62,9 +62,9 @@ P.handleMessage = function(e){
 
     console.log('↖', event, data);
 
-    var handlerName = 'on' + event[0].toUpperCase() + event.slice(1);
-    if(this[handlerName]) {
-      return this[handlerName](data);
+    var handler = this.messageHandlers[event];
+    if(handler) {
+      return handler.call(this, data);
     } else {
       // Can't handle that, re-translating event
       var evt = new CustomEvent(event, { detail: data, bubbles: true });
@@ -82,40 +82,42 @@ P.sendMessage = function(event, data){
   }
 };
 
-P.onStartListening = function(){
-  this.sendMessage('environmentChanged', this.env);
-  this.sendMessage('attributesChanged', this.config);
-  this.sendMessage('learnerstateChanged', this.userstate);
-  this.sendMessage('editableChanged', { editable: this.editable });
-  // Compat
-  this.sendMessage('setEditable', { editable: this.editable });
-  this.sendMessage('attached');
-};
+P.messageHandlers = {
+  startListening: function(){
+    this.sendMessage('environmentChanged', this.env);
+    this.sendMessage('attributesChanged', this.config);
+    this.sendMessage('learnerstateChanged', this.userstate);
+    this.sendMessage('editableChanged', { editable: this.editable });
+    // Compat
+    this.sendMessage('setEditable', { editable: this.editable });
+    this.sendMessage('attached');
+  },
 
-P.onSetHeight = function(data){
-  var height = Math.min(data.pixels, 720);
-  this.iframe.style.height = height + 'px';
-};
+  setHeight: function(data){
+    var height = Math.min(data.pixels, 720);
+    this.iframe.style.height = height + 'px';
+  },
 
-P.onSetAttributes = function(data){
-  var config = this.readAttributeAsJson('data-config');
-  patch(config, data);
-  this.setAttribute('data-config', JSON.stringify(config));
-};
+  setAttributes: function(data){
+    var config = this.readAttributeAsJson('data-config');
+    patch(config, data);
+    this.setAttribute('data-config', JSON.stringify(config));
+  },
 
-P.onSetLearnerState = function(data) {
-  var userstate = this.readAttributeAsJson('data-userstate');
-  patch(userstate, data);
-  this.setAttribute('data-userstate', JSON.stringify(userstate));
-};
+  setLearnerState: function(data) {
+    var userstate = this.readAttributeAsJson('data-userstate');
+    patch(userstate, data);
+    this.setAttribute('data-userstate', JSON.stringify(userstate));
+  },
 
-P.onGetPath = function(data) {
-  console.warn('getPath/setPath are obsolete');
-  var assetUrlTemplate = this.env && this.env.assetUrlTemplate;
-  if(assetUrlTemplate) {
-    var url = assetUrlTemplate.replace('<%= id %>', data.assetId );
-    this.sendMessage('setPath', { url: url});
-  };
+  getPath: function(data) {
+    console.warn('getPath/setPath are obsolete');
+    var assetUrlTemplate = this.env && this.env.assetUrlTemplate;
+    if(assetUrlTemplate) {
+      var url = assetUrlTemplate.replace('<%= id %>', data.assetId );
+      this.sendMessage('setPath', { url: url});
+    }
+  }
 };
 
 window.addEventListener('message', function(e){
@@ -124,7 +126,7 @@ window.addEventListener('message', function(e){
     if(iframe.contentWindow == e.source) {
       iframe.dispatchEvent(new CustomEvent('message', { detail: e.data }));
     }
-  })
+  });
 });
 
 document.registerElement('versal-iframe-launcher', { prototype: P });
