@@ -1,6 +1,6 @@
 {
   "name": "versal-iframe-launcher",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Versal team <support@versal.com>",
   "description": "Launcher for iframe gadgets on versal.com",
   "main": "index.html",
@@ -11,7 +11,7 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "package.json"
   ],
   "devDependencies": {
     "mocha": "~1.18",
