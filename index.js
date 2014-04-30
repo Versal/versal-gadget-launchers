@@ -1,3 +1,8 @@
+var Semver = function(ver) {
+  var segs = ver.split('.');
+  return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
+};
+
 var patch = function(to, from) {
   Object.keys(from).forEach(function(key){
     to[key] = from[key];
@@ -20,6 +25,15 @@ var prototype = Object.create(HTMLElement.prototype, {
 
   userstate: {
     get: function(){ return this.readAttributeAsJson('data-userstate'); }
+  },
+
+  apiVersion: {
+    get: function(){
+      if(!this._apiVersion) {
+        this._apiVersion = new Semver(this.getAttribute('data-api-version') || '0.0.0');
+      };
+      return this._apiVersion;
+    }
   }
 });
 
@@ -29,7 +43,6 @@ prototype.readAttributeAsJson = function(name) {
 };
 
 prototype.attachedCallback = function(){
-  console.log('attached');
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.getAttribute('src');
   this.iframe.addEventListener('message', this.handleMessage.bind(this));
@@ -41,8 +54,9 @@ prototype.attributeChangedCallback = function(name){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
-      // Compat
-      this.sendMessage('setEditable', { editable: this.editable });
+      if(this.apiVersion.minor < 1) {
+        this.sendMessage('setEditable', { editable: this.editable });
+      }
       break;
 
     case 'data-config':

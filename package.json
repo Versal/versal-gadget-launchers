@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "mocha-browser test/index.html"
+    "test": "echo 'run static web server and navigate to test/index.html'"
   },
   "devDependencies": {
     "mocha-browser": "^0.2.0"
