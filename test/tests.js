@@ -23,7 +23,7 @@ describe('player events', function() {
         expect(recordedEvents).to.deep.equal([
           {"event":"environmentChanged","data":{}},
           {"event":"attributesChanged","data":{}},
-          {"event":"learnerstateChanged","data":{}},
+          {"event":"learnerStateChanged","data":{}},
           {"event":"editableChanged","data":{"editable":false}},
           {"event":"setEditable","data":{"editable":false}},
           {"event":"attached"}
