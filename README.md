@@ -1,6 +1,6 @@
-This repo contains the new decoupled launcher for iframe gadgets. We are still moving things around quite a bit, so please bear with us! :-)
+# Versal Iframe Launcher
 
-Below you can find the API documentation.
+This launcher is used to launch gadgets inside Versal course.
 
 # Gadget API
 
