@@ -104,7 +104,7 @@ prototype.messageHandlers = {
   startListening: function(){
     this.sendMessage('environmentChanged', this.env);
     this.sendMessage('attributesChanged', this.config);
-    this.sendMessage('learnerstateChanged', this.userstate);
+    this.sendMessage('learnerStateChanged', this.userstate);
     this.sendMessage('editableChanged', { editable: this.editable });
     // Compat
     this.sendMessage('setEditable', { editable: this.editable });
