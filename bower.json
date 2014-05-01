@@ -16,6 +16,6 @@
   "devDependencies": {
     "mocha": "~1.18",
     "chai": "~1.9",
-    "versal-runtime": "Versal/versal-runtime"
+    "versal-component-runtime": "~0.2"
   }
 }
