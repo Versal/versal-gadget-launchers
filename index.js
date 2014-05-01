@@ -27,6 +27,14 @@ var prototype = Object.create(HTMLElement.prototype, {
     get: function(){ return this.readAttributeAsJson('data-userstate'); }
   },
 
+  scores: {
+    get: function(){ return this.readAttributeAsJson('data-scores'); }
+  },
+
+  challenges: {
+    get: function(){ return this.readAttributeAsJson('data-challenges'); }
+  },
+
   apiVersion: {
     get: function(){
       if(!this._apiVersion) {
@@ -66,6 +74,9 @@ prototype.attributeChangedCallback = function(name){
     case 'data-userstate':
       this.sendMessage('learnerStateChanged', this.userstate);
       break;
+
+    case 'data-challenges':
+      this.sendMessage('challengesChanged', this.challenges);
   }
 };
 
@@ -109,6 +120,8 @@ prototype.messageHandlers = {
     // Compat
     this.sendMessage('setEditable', { editable: this.editable });
     this.sendMessage('attached');
+    this.sendMessage('challengesChanged', this.challenges);
+    this.sendMessage('scoresChanged', this.scores);
   },
 
   setHeight: function(data){
@@ -136,6 +149,9 @@ prototype.messageHandlers = {
       this.sendMessage('setPath', { url: url});
     }
   },
+
+  setChallenges: function(challenges){ this.fireCustomEvent('setChallenges', challenges); },
+  scoreChallenges: function(answers){ this.fireCustomEvent('scoreChallenges', answers); },
 
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
   setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
