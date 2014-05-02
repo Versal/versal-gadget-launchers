@@ -8,7 +8,7 @@ describe('player events', function() {
   });
 
   afterEach(function() {
-    launcher.remove();
+    document.body.removeChild(launcher);
   });
 
   it('sends a bunch of initial events', function(done) {
