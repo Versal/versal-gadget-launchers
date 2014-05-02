@@ -72,16 +72,6 @@ Ready to render - sent after all 'bootstrapping' attribute events.
 }
 ```
 
-### detached
-
-Gadget has been removed from the DOM.
-
-```
-{
-  event: 'detached'
-}
-```
-
 ## Gadget Events
 
 Events triggered by gadgets.
