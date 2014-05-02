@@ -1,16 +1,14 @@
-var expect = chai.expect;
-
 describe('player events', function() {
   var recordedEvents, launcher;
 
   beforeEach(function() {
     launcher = document.createElement('versal-iframe-launcher');
-    launcher.setAttribute('src', 'record_player_events.html');
+    launcher.setAttribute('src', '/base/test/record_player_events.html');
     document.body.appendChild(launcher);
   });
 
   afterEach(function() {
-    launcher.remove();
+    document.body.removeChild(launcher);
   });
 
   it('sends a bunch of initial events', function(done) {
@@ -20,7 +18,7 @@ describe('player events', function() {
       recordedEvents.push(eventMessage);
 
       if (eventMessage.event == 'attached') {
-        expect(recordedEvents).to.deep.equal([
+        chai.expect(recordedEvents).to.deep.equal([
           {"event":"environmentChanged","data":{}},
           {"event":"attributesChanged","data":{}},
           {"event":"learnerStateChanged","data":{}},
