@@ -1,8 +1,14 @@
 {
   "scripts": {
-    "test": "echo 'run static web server and navigate to test/index.html'"
+    "test": "karma start --browsers Firefox --single-run"
   },
   "devDependencies": {
-    "mocha-browser": "^0.2.0"
+    "chai": "*",
+    "karma": "*",
+    "karma-cli": "*",
+    "karma-chai": "*",
+    "karma-firefox-launcher": "*",
+    "karma-mocha": "*",
+    "mocha": "*"
   }
 }
