@@ -34,4 +34,40 @@ describe('player events', function() {
       }
     };
   });
+
+  it('sends attributesChanged when data-config changes', function(done) {
+    window.recordPlayerEvent = function(eventMessage) {
+      if (eventMessage.event == 'attached') {
+        launcher.setAttribute('data-config', '{"test": "new-config"}');
+      }
+      if (eventMessage.event == 'attributesChanged' &&
+            eventMessage.data.test == 'new-config') {
+        done();
+      }
+    };
+  });
+
+  it('sends learnerStateChanged when data-userstate changes', function(done) {
+    window.recordPlayerEvent = function(eventMessage) {
+      if (eventMessage.event == 'attached') {
+        launcher.setAttribute('data-userstate', '{"test": "new-userstate"}');
+      }
+      if (eventMessage.event == 'learnerStateChanged' &&
+            eventMessage.data.test == 'new-userstate') {
+        done();
+      }
+    };
+  });
+
+  it('sends editableChanged when editable changes', function(done) {
+    window.recordPlayerEvent = function(eventMessage) {
+      if (eventMessage.event == 'attached') {
+        launcher.setAttribute('editable', true);
+      }
+      if (eventMessage.event == 'editableChanged' &&
+            eventMessage.data.editable === true) {
+        done();
+      }
+    };
+  });
 });
