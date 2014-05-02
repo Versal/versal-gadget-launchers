@@ -1,0 +1,12 @@
+<script>
+  window.addEventListener('message', function(event) {
+    window.parent.recordPlayerEvent(event.data);
+  });
+
+  // called by tests
+  window.sendGadgetEvent = function(eventMessage) {
+    window.parent.postMessage(eventMessage, '*');
+  };
+
+  sendGadgetEvent({event: 'startListening'});
+</script>
