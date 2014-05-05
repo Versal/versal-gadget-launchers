@@ -6,7 +6,7 @@ module.exports = function(config) {
       'index.html',
       'test/*_spec.js',
       {pattern: 'index.js', included: false},
-      {pattern: 'test/record_player_events.html', included: false}
+      {pattern: 'test/test_gadget.html', included: false}
     ],
     reporters: ['progress'],
     port: 9876,
