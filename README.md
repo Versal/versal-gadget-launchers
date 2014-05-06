@@ -2,11 +2,25 @@
 
 This launcher is used to launch gadgets inside Versal course.
 
-# Gadget API
+# Gadget API v0.1.0
+
+To use Versal Gadget API first of all you have to send 'startListening' event. You can send this event after all your modules are loaded and initialized, and gadget is ready to do the job.
+
+### startListening
+
+    window.parent.postMessage({ event: 'startListening' });
+
+Reports to the player, that gadget is ready to receive events. Player responds with a series of events. See below.
+
+```
+{
+  event: 'startListening'
+}
+```
 
 ## Player Events
 
-Events triggered by the player.
+After receiving startListening event from the gadget, player responds with the following events:
 
 ### environmentChanged
 
@@ -72,19 +86,9 @@ Ready to render - sent after all 'bootstrapping' attribute events.
 }
 ```
 
-## Gadget Events
+## Gadget commands
 
-Events triggered by gadgets.
-
-### startListening
-
-Reports to the player, that gadget is ready to receive events. Player responds with a series of events. See below.
-
-```
-{
-  event: 'startListening'
-}
-```
+Commands, that gadget can trigger to inform player about changes.
 
 ### setAttributes
 
