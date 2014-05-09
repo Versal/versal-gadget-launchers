@@ -108,12 +108,6 @@ prototype.messageHandlers = {
     this.sendMessage('editableChanged', { editable: this.editable });
     // Compat
     this.sendMessage('setEditable', { editable: this.editable });
-    if (this.config['vs-challenges']) {
-      this.sendMessage('challengesChanged', {challenges: this.config['vs-challenges']});
-    }
-    if (this.userstate['vs-scores']) {
-      this.sendMessage('scoresChanged', this.userstate['vs-scores']);
-    }
     this.sendMessage('attached');
   },
 
@@ -148,10 +142,6 @@ prototype.messageHandlers = {
       this.sendMessage('setPath', { url: url});
     }
   },
-
-  // Compat
-  setChallenges: function(challenges){ this.fireCustomEvent('setChallenges', challenges); },
-  scoreChallenges: function(answers){ this.fireCustomEvent('scoreChallenges', answers); },
 
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
   setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
