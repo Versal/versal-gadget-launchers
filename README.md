@@ -2,7 +2,7 @@
 
 This launcher is used to launch gadgets inside Versal course.
 
-# Gadget API v0.1.0
+# Gadget API v0.2.1
 
 To use Versal Gadget API first of all you have to send 'startListening' event. You can send this event after all your modules are loaded and initialized, and gadget is ready to do the job.
 
