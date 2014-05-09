@@ -1,6 +1,6 @@
 {
-  "name":"versal-iframe-launcher",
-  "version": "0.2.1",
+  "name": "versal-iframe-launcher",
+  "version": "0.2.2",
   "scripts": {
     "test": "karma start --browsers Firefox --single-run"
   },
