@@ -108,6 +108,12 @@ prototype.messageHandlers = {
     this.sendMessage('editableChanged', { editable: this.editable });
     // Compat
     this.sendMessage('setEditable', { editable: this.editable });
+    if (this.config['vs-challenges']) {
+      this.sendMessage('challengesChanged', {challenges: this.config['vs-challenges']});
+    }
+    if (this.userstate['vs-scores']) {
+      this.sendMessage('scoresChanged', this.userstate['vs-scores']);
+    }
     this.sendMessage('attached');
   },
 
@@ -120,12 +126,18 @@ prototype.messageHandlers = {
     var config = this.readAttributeAsJson('data-config');
     patch(config, data);
     this.setAttribute('data-config', JSON.stringify(config));
+
+    // Player needs those events, until we have mutation observers in place
+    this.fireCustomEvent('setAttributes', config);
   },
 
   setLearnerState: function(data) {
     var userstate = this.readAttributeAsJson('data-userstate');
     patch(userstate, data);
     this.setAttribute('data-userstate', JSON.stringify(userstate));
+
+    // Player needs those events, until we have mutation observers in place
+    this.fireCustomEvent('setLearnerState', userstate);
   },
 
   getPath: function(data) {
@@ -136,6 +148,10 @@ prototype.messageHandlers = {
       this.sendMessage('setPath', { url: url});
     }
   },
+
+  // Compat
+  setChallenges: function(challenges){ this.fireCustomEvent('setChallenges', challenges); },
+  scoreChallenges: function(answers){ this.fireCustomEvent('scoreChallenges', answers); },
 
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
   setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
