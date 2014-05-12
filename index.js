@@ -11,6 +11,10 @@ var patch = function(to, from) {
 };
 
 var prototype = Object.create(HTMLElement.prototype, {
+  src: {
+    get: function(){ return this.getAttribute('src') || 'about:blank'; }
+  },
+
   editable: {
     get: function(){ return this.getAttribute('editable') == 'true'; }
   },
@@ -44,11 +48,15 @@ prototype.readAttributeAsJson = function(name) {
 
 prototype.attachedCallback = function(){
   this.iframe = document.createElement('iframe');
-  this.iframe.src = this.getAttribute('src');
+  this.iframe.src = this.src;
   this.iframe.addEventListener('message', this.handleMessage.bind(this));
 
   this.appendChild(this.iframe);
 };
+
+prototype.detachedCallback = function(){
+  this.removeChild(this.iframe);
+}
 
 prototype.attributeChangedCallback = function(name){
   switch(name) {
