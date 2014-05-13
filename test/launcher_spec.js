@@ -69,14 +69,24 @@ describe('iframe launcher', function() {
       };
     });
 
-    it('fires an event upon receiving setAttributes', function(done) {
-      launcher.addEventListener('setAttributes', function(){ done(); });
+    it('sets an attribute upon receiving setAttributes', function(done) {
+      var observer = new MutationObserver(function(mx) {
+        chai.expect(launcher.getAttribute('data-test2')).to.equal('new-config');
+        done();
+      });
+      observer.observe(launcher, {attributes: true});
+
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
     it('fires an event upon receiving setLearnerState', function(done) {
-      launcher.addEventListener('setLearnerState', function(){ done(); });
+      var observer = new MutationObserver(function() {
+        chai.expect(launcher.getAttribute('data-test2')).to.equal('new-userstate');
+        done();
+      });
+      observer.observe(launcher, {attributes: true, subtree: true});
+
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setLearnerState', data: {test2: 'new-userstate'}});
     });

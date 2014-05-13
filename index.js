@@ -118,11 +118,17 @@ prototype.messageHandlers = {
   },
 
   setAttributes: function(attrs){
+    Object.keys(attrs).forEach(function(key){
+      this.setAttribute('data-' + key, attrs[key]);
+    }.bind(this));
     this.fireCustomEvent('setAttributes', attrs);
   },
 
   setLearnerState: function(attrs) {
-    this.fireCustomEvent('setLearnerState', userstate);
+    Object.keys(attrs).forEach(function(key){
+      this.setAttribute('data-' + key, attrs[key]);
+    }.bind(this));
+    this.fireCustomEvent('setLearnerState', attrs);
   },
 
   getPath: function(data) {
