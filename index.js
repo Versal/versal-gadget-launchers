@@ -31,6 +31,10 @@ var prototype = Object.create(HTMLElement.prototype, {
     get: function(){ return this.readAttributeAsJson('data-userstate'); }
   },
 
+  debug: {
+    get: function(){ return this.hasAttribute('debug'); }
+  },
+
   apiVersion: {
     get: function(){
       if(!this._apiVersion) {
@@ -44,6 +48,10 @@ var prototype = Object.create(HTMLElement.prototype, {
 prototype.readAttributeAsJson = function(name) {
   if(!this.hasAttribute(name)) { return {}; }
   return JSON.parse(this.getAttribute(name));
+};
+
+prototype.log = function(dir, event, data) {
+  if(this.debug) { console.log(dir, event, data); }
 };
 
 prototype.attachedCallback = function(){
@@ -82,7 +90,7 @@ prototype.handleMessage = function(event) {
     var eventName = event.detail.event;
     var data = event.detail.data;
 
-    console.log('↖', eventName, data);
+    this.log('↖', eventName, data);
 
     var handler = this.messageHandlers[eventName];
     if(handler) {
@@ -99,7 +107,7 @@ prototype.sendMessage = function(eventName, data) {
   if(data) { message.data = data; }
   if(this.iframe && this.iframe.contentWindow) {
     this.iframe.contentWindow.postMessage(message, '*');
-    console.log('↘', message.event, message.data);
+    this.log('↘', message.event, message.data);
   }
 };
 
