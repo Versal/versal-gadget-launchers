@@ -5,20 +5,28 @@ This launcher is used to launch Versal iframe gadgets.
 ## Usage
 
 1. Install [versal-component-runtime](https://github.com/Versal/component-runtime) and versal-iframe-launcher:
-
-    bower install versal-component-runtime versal-iframe-launcher
+```
+bower install versal-component-runtime versal-iframe-launcher
+```
 
 2. Include `versal-component-runtime` as a script in the HEAD section of your page:
-
-    <script src="bower_components/versal-component-runtime/dist/runtime.min.js"></script>
+```
+<script src="bower_components/versal-component-runtime/dist/runtime.min.js"></script>
+```
 
 3. Link versal-iframe-launcher in the HEAD section of your page:
+```
+<link rel="import" href="bower_components/versal-iframe-launcher/index.html" />
+```
 
-    <link rel="import" href="bower_components/versal-iframe-launcher/index.html" />
-
-4. Embed `&lt;versal-iframe-launcher&gt;` in the page like that:
-
-    <versal-iframe-launcher src="https://stack.versal.com/api2/gadgets/am/hello-world/0.1.6/index.html" data-config='{ "word": "test", "color": "red" }' data-environment='{ "assetUrlTemplate": "https://static.versal.com/assets/<%= id %>'></versal-iframe-launcher>
+4. Embed `<versal-iframe-launcher>` in the page like that:
+```
+<versal-iframe-launcher
+  src="https://stack.versal.com/api2/gadgets/am/hello-world/0.1.6/index.html"
+  data-config='{ "word": "test", "color": "red", "imageid": "3f6ba8d9-b464-46a9-8fa5-fec68a28a052" }'
+  data-environment='{ "assetUrlTemplate": "https://static.versal.com/assets/<%= id %>'>
+</versal-iframe-launcher>
+```
 
 Complete example is available at `demo.html`.
 
