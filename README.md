@@ -1,6 +1,29 @@
 # Versal Iframe Launcher
 
-This launcher is used to launch Versal iframe gadgets.
+Versal iframe launcher enables web-component interface for an iframe gadget. Launcher sends `attributeChangedCallback` and `attachedCallback`, as if you were in web component. Gadget can `setAttribute` and `dispatchEvent`. All attributes, set by the gadget, are saved in launcher's dataset.
+
+## attributes
+
+<table>
+<tr><th>name</th><th>options</th><th>decription</th></tr>
+<tr><td><b>src</b></td><td>URL</td><td>Path to index.html of the gadget you want to launch.</td></tr>
+<tr><td><b>editable</b></td><td>boolean</td><td>Toggle this attribute to send 'editableChanged' event to the gadget.</td></tr>
+<tr><td><b>debug</b></td><td>boolean</td><td>If true, launcher will print all the events to console.</td></tr>
+<tr><td><b>data-*</b></td><td>arbitrary value</td><td>All data- attributes are send to the iframe, without "data-".</td></tr>
+</table>
+
+## lifecycle
+
+Once attached to the document, launcher creates an iframe with the specified `src` and starts to listen to `window.onmessage`. When it receives message from the contained iframe, it either takes an appropriate action, or re-triggers it as DOM event.
+
+## supported messages
+
+<table>
+<tr><th>event</th><th>data</th><th>decription</th></tr>
+<tr><td><b>setHeight</b></td><td><code>{ pixels: 200 }</code></td><td>Sets the height of contained iframe.</td></tr>
+<tr><td><b>setAttributes</b></td><td><code>{ city: 'San Francisco', state: 'CA' }</code></td><td>Sets data- attributes on itself. The following attributes will be set: `data-city="San Francisco"` and `data-state="CA"`.</td></tr>
+</table>
+
 
 ## Usage
 

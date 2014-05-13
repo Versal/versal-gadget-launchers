@@ -3,11 +3,19 @@ var Semver = function(ver) {
   return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
 };
 
-var patch = function(to, from) {
+var _patch = function(to, from) {
   Object.keys(from).forEach(function(key){
     to[key] = from[key];
   });
   return to;
+};
+
+var _clone = function(obj) {
+  var clone = {};
+  Object.keys(obj).forEach(function(key){
+    clone[key] = obj[key];
+  });
+  return clone;
 };
 
 var prototype = Object.create(HTMLElement.prototype, {
@@ -19,20 +27,12 @@ var prototype = Object.create(HTMLElement.prototype, {
     get: function(){ return this.getAttribute('editable') == 'true'; }
   },
 
-  env: {
-    get: function(){ return this.readAttributeAsJson('data-environment'); }
-  },
-
-  config: {
-    get: function(){ return this.readAttributeAsJson('data-config'); }
-  },
-
-  userstate: {
-    get: function(){ return this.readAttributeAsJson('data-userstate'); }
-  },
-
   debug: {
     get: function(){ return this.hasAttribute('debug'); }
+  },
+
+  env: {
+    get: function(){ return this.readAttributeAsJson('env'); }
   },
 
   apiVersion: {
@@ -64,25 +64,27 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
-}
+};
 
-prototype.attributeChangedCallback = function(name){
-  switch(name) {
-    case 'editable':
-      this.sendMessage('editableChanged', { editable: this.editable });
-      if(this.apiVersion.minor < 1) {
-        this.sendMessage('setEditable', { editable: this.editable });
-      }
-      break;
+prototype.attributeChangedCallback = function(name, old, current){
+  if(this.iframe){
+    switch(name) {
+      case 'src':
+        this.iframe.src = this.src;
+        break;
 
-    case 'data-config':
-      this.sendMessage('attributesChanged', this.config);
-      break;
+      case 'editable':
+        this.sendMessage('editableChanged', { editable: this.editable });
+        break;
 
-    case 'data-userstate':
-      this.sendMessage('learnerStateChanged', this.userstate);
-      break;
-  }
+      default:
+        if(name.indexOf('data-') == 0) {
+          var attr = {};
+          attr[name.slice(5)] = current;
+          this.sendMessage('attributesChanged', attr);
+        }
+    };
+  };
 };
 
 prototype.handleMessage = function(event) {
@@ -119,11 +121,8 @@ prototype.fireCustomEvent = function(eventName, data) {
 prototype.messageHandlers = {
   startListening: function(){
     this.sendMessage('environmentChanged', this.env);
-    this.sendMessage('attributesChanged', this.config);
-    this.sendMessage('learnerStateChanged', this.userstate);
+    this.sendMessage('attributesChanged', _clone(this.dataset));
     this.sendMessage('editableChanged', { editable: this.editable });
-    // Compat
-    this.sendMessage('setEditable', { editable: this.editable });
     this.sendMessage('attached');
   },
 
@@ -132,21 +131,11 @@ prototype.messageHandlers = {
     this.iframe.style.height = height + 'px';
   },
 
-  setAttributes: function(data){
-    var config = this.readAttributeAsJson('data-config');
-    patch(config, data);
-    this.setAttribute('data-config', JSON.stringify(config));
-
-    // Player needs those events, until we have mutation observers in place
-    this.fireCustomEvent('setAttributes', config);
+  setAttributes: function(attrs){
+    this.fireCustomEvent('setAttributes', attrs);
   },
 
-  setLearnerState: function(data) {
-    var userstate = this.readAttributeAsJson('data-userstate');
-    patch(userstate, data);
-    this.setAttribute('data-userstate', JSON.stringify(userstate));
-
-    // Player needs those events, until we have mutation observers in place
+  setLearnerState: function(attrs) {
     this.fireCustomEvent('setLearnerState', userstate);
   },
 

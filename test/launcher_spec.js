@@ -3,10 +3,9 @@ describe('iframe launcher', function() {
 
   beforeEach(function() {
     launcher = document.createElement('versal-iframe-launcher');
-    launcher.setAttribute('data-environment', '{"test": "initial-environment"}');
-    launcher.setAttribute('data-config', '{"test": "initial-config"}');
-    launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
     launcher.setAttribute('src', '/base/test/test_gadget.html');
+    launcher.setAttribute('env', '{"test": "initial-environment"}');
+    launcher.setAttribute('data-foo', 'bar');
     document.body.appendChild(launcher);
   });
 
@@ -15,7 +14,8 @@ describe('iframe launcher', function() {
   });
 
   describe('player events', function() {
-    it('sends a bunch of initial events', function(done) {
+
+    it('sends a bunch of initial events upon "startListening"', function(done) {
       var recordedEvents = [];
 
       window.recordPlayerEvent = function(eventMessage) {
@@ -24,10 +24,8 @@ describe('iframe launcher', function() {
         if (eventMessage.event == 'attached') {
           chai.expect(recordedEvents).to.deep.equal([
             {event: 'environmentChanged', data: {test: 'initial-environment'}},
-            {event: 'attributesChanged', data: {test: 'initial-config'}},
-            {event: 'learnerStateChanged', data: {test: 'initial-userstate'}},
+            {event: 'attributesChanged', data: {foo: 'bar'}},
             {event: 'editableChanged', data: {editable: false}},
-            {event: 'setEditable', data: {editable: false}},
             {event: 'attached'}
           ]);
           delete window.recordPlayerEvent;
@@ -36,25 +34,13 @@ describe('iframe launcher', function() {
       };
     });
 
-    it('sends attributesChanged when data-config changes', function(done) {
+    it('sends attributesChanged when attribute has changed', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'attached') {
-          launcher.setAttribute('data-config', '{"test": "new-config"}');
+          launcher.setAttribute('data-baz', 'buzz');
         }
         if (eventMessage.event == 'attributesChanged' &&
-              eventMessage.data.test == 'new-config') {
-          done();
-        }
-      };
-    });
-
-    it('sends learnerStateChanged when data-userstate changes', function(done) {
-      window.recordPlayerEvent = function(eventMessage) {
-        if (eventMessage.event == 'attached') {
-          launcher.setAttribute('data-userstate', '{"test": "new-userstate"}');
-        }
-        if (eventMessage.event == 'learnerStateChanged' &&
-              eventMessage.data.test == 'new-userstate') {
+              eventMessage.data.baz == 'buzz') {
           done();
         }
       };
@@ -83,28 +69,14 @@ describe('iframe launcher', function() {
       };
     });
 
-    it('patches config when receiving setAttributes', function(done) {
-      var observer = new MutationObserver(function() {
-        chai.expect(launcher.config).to.deep.eq(
-          {test: 'initial-config', test2: 'new-config'});
-        observer.disconnect();
-        done();
-      });
-      observer.observe(launcher, {attributes: true});
-
+    it('fires an event upon receiving setAttributes', function(done) {
+      launcher.addEventListener('setAttributes', function(){ done(); });
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
-    it('patches userstate when receiving setLearnerState', function(done) {
-      var observer = new MutationObserver(function() {
-        chai.expect(launcher.userstate).to.deep.eq(
-          {test: 'initial-userstate', test2: 'new-userstate'});
-        observer.disconnect();
-        done();
-      });
-      observer.observe(launcher, {attributes: true});
-
+    it('fires an event upon receiving setLearnerState', function(done) {
+      launcher.addEventListener('setLearnerState', function(){ done(); });
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setLearnerState', data: {test2: 'new-userstate'}});
     });
