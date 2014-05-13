@@ -1,8 +1,3 @@
-var Semver = function(ver) {
-  var segs = ver.split('.');
-  return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
-};
-
 var _patch = function(to, from) {
   Object.keys(from).forEach(function(key){
     to[key] = from[key];
@@ -33,15 +28,6 @@ var prototype = Object.create(HTMLElement.prototype, {
 
   env: {
     get: function(){ return this.readAttributeAsJson('env'); }
-  },
-
-  apiVersion: {
-    get: function(){
-      if(!this._apiVersion) {
-        this._apiVersion = new Semver(this.getAttribute('data-api-version') || '0.0.0');
-      };
-      return this._apiVersion;
-    }
   }
 });
 
