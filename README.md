@@ -19,12 +19,12 @@ bower install versal-component-runtime versal-iframe-launcher
 <link rel="import" href="bower_components/versal-iframe-launcher/index.html" />
 ```
 
-4. Embed `<versal-iframe-launcher>` in the page like that:
+4. Embed `<versal-iframe-launcher>` in the page like this:
 ```
 <versal-iframe-launcher
   src="https://stack.versal.com/api2/gadgets/am/hello-world/0.1.6/index.html"
   data-config='{ "word": "test", "color": "red", "imageid": "3f6ba8d9-b464-46a9-8fa5-fec68a28a052" }'
-  data-environment='{ "assetUrlTemplate": "https://static.versal.com/assets/<%= id %>'>
+  data-environment='{ "assetUrlTemplate": "https://static.versal.com/assets/<%= id %>" }'
 </versal-iframe-launcher>
 ```
 
