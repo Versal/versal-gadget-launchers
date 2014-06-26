@@ -1,4 +1,4 @@
-# Versal Iframe Launcher [![Build Status](https://travis-ci.org/Versal/iframe-launcher.svg?branch=master)](https://travis-ci.org/Versal/iframe-launcher)
+# Versal Iframe Launcher [![Build Status](https://travis-ci.org/Versal/iframe-launcher.svg?branch=master)](https://travis-ci.org/Versal/iframe-launcher) [![Code Climate](https://codeclimate.com/github/Versal/iframe-launcher.png)](https://codeclimate.com/github/Versal/iframe-launcher)
 
 This launcher is used to launch Versal iframe gadgets.
 
