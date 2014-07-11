@@ -121,16 +121,16 @@ describe('iframe launcher', function() {
         {event: 'setHeight', data: {pixels: 137}});
     });
 
-    it('caps height at 720 pixels', function(done) {
+    it('does NOT cap height', function(done) {
       var observer = new MutationObserver(function() {
-        chai.expect(launcher.clientHeight).to.eq(720);
+        chai.expect(launcher.clientHeight).to.eq(10000);
         observer.disconnect();
         done();
       });
       observer.observe(launcher, {attributes: true, subtree: true});
 
       launcher.children[0].contentWindow.sendGadgetEvent(
-        {event: 'setHeight', data: {pixels: 1337}});
+        {event: 'setHeight', data: {pixels: 10000}});
     });
 
     it('passes on some events that are handled by the player', function(done) {
