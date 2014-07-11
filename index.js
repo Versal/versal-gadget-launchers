@@ -128,8 +128,7 @@ prototype.messageHandlers = {
   },
 
   setHeight: function(data){
-    var height = Math.min(data.pixels, 720);
-    this.iframe.style.height = height + 'px';
+    this.iframe.style.height = data.pixels + 'px';
   },
 
   setAttributes: function(data){
