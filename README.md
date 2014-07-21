@@ -93,7 +93,7 @@ Delivering the initial or updated learner state (PUT).
 
 ### editableChanged
 
-Indicate changed editability of the gadget. Sent once before `attached` and then in response to user actions.
+Indicate changed editability of the gadget. Sent once after `startListening`, and then in response to user actions.
 
 ```
 {
@@ -101,16 +101,6 @@ Indicate changed editability of the gadget. Sent once before `attached` and then
   data: {
     editable: true
   }
-}
-```
-
-### attached
-
-Ready to render - sent after all 'bootstrapping' attribute events.
-
-```
-{
-  event: 'attached'
 }
 ```
 

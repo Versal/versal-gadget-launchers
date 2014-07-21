@@ -122,9 +122,6 @@ prototype.messageHandlers = {
     this.sendMessage('attributesChanged', this.config);
     this.sendMessage('learnerStateChanged', this.userstate);
     this.sendMessage('editableChanged', { editable: this.editable });
-    // Compat
-    this.sendMessage('setEditable', { editable: this.editable });
-    this.sendMessage('attached');
   },
 
   setHeight: function(data){

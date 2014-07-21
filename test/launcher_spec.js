@@ -21,14 +21,12 @@ describe('iframe launcher', function() {
       window.recordPlayerEvent = function(eventMessage) {
         recordedEvents.push(eventMessage);
 
-        if (eventMessage.event == 'attached') {
+        if (eventMessage.event == 'editableChanged') {
           chai.expect(recordedEvents).to.deep.equal([
             {event: 'environmentChanged', data: {test: 'initial-environment'}},
             {event: 'attributesChanged', data: {test: 'initial-config'}},
             {event: 'learnerStateChanged', data: {test: 'initial-userstate'}},
             {event: 'editableChanged', data: {editable: false}},
-            {event: 'setEditable', data: {editable: false}},
-            {event: 'attached'}
           ]);
           delete window.recordPlayerEvent;
           done();
@@ -38,7 +36,7 @@ describe('iframe launcher', function() {
 
     it('sends attributesChanged when data-config changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
-        if (eventMessage.event == 'attached') {
+        if (eventMessage.event == 'editableChanged') {
           launcher.setAttribute('data-config', '{"test": "new-config"}');
         }
         if (eventMessage.event == 'attributesChanged' &&
@@ -50,7 +48,7 @@ describe('iframe launcher', function() {
 
     it('sends learnerStateChanged when data-userstate changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
-        if (eventMessage.event == 'attached') {
+        if (eventMessage.event == 'editableChanged') {
           launcher.setAttribute('data-userstate', '{"test": "new-userstate"}');
         }
         if (eventMessage.event == 'learnerStateChanged' &&
@@ -62,7 +60,7 @@ describe('iframe launcher', function() {
 
     it('sends editableChanged when editable changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
-        if (eventMessage.event == 'attached') {
+        if (eventMessage.event == 'editableChanged') {
           launcher.setAttribute('editable', true);
         }
         if (eventMessage.event == 'editableChanged' &&
@@ -77,7 +75,7 @@ describe('iframe launcher', function() {
 
     beforeEach(function(done){
       window.recordPlayerEvent = function(eventMessage) {
-        if (eventMessage.event == 'attached') {
+        if (eventMessage.event == 'editableChanged') {
           done();
         }
       };
