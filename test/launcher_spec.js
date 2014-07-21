@@ -27,7 +27,6 @@ describe('iframe launcher', function() {
             {event: 'attributesChanged', data: {test: 'initial-config'}},
             {event: 'learnerStateChanged', data: {test: 'initial-userstate'}},
             {event: 'editableChanged', data: {editable: false}},
-            {event: 'setEditable', data: {editable: false}},
             {event: 'attached'}
           ]);
           delete window.recordPlayerEvent;
