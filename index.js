@@ -58,6 +58,7 @@ prototype.attachedCallback = function(){
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.src;
   this.iframe.addEventListener('message', this.handleMessage.bind(this));
+  this.iframe.setAttribute('allowfullscreen', 'allowfullscreen');
 
   this.appendChild(this.iframe);
 };
