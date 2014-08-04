@@ -112,8 +112,9 @@ prototype.sendMessage = function(eventName, data) {
   }
 };
 
-prototype.fireCustomEvent = function(eventName, data) {
-  var evt = new CustomEvent(eventName, { detail: data, bubbles: true });
+prototype.fireCustomEvent = function(eventName, data, options) {
+  options = options || {};
+  var evt = new CustomEvent(eventName, { detail: data, bubbles: options.bubbles || false });
   this.dispatchEvent(evt);
 };
 
@@ -158,8 +159,8 @@ prototype.messageHandlers = {
 
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
   setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
-  track: function(data) { this.fireCustomEvent('track', data); },
-  error: function(data) { this.fireCustomEvent('error', data); },
+  track: function(data) { this.fireCustomEvent('track', data, {bubbles: true}); },
+  error: function(data) { this.fireCustomEvent('error', data, {bubbles: true}); },
   changeBlocking: function(data) { this.fireCustomEvent('changeBlocking', data); },
   requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); }
 };
