@@ -155,5 +155,11 @@ describe('iframe launcher', function() {
       };
       launcher.children[0].contentWindow.sendGadgetEvent({event: 'error'});
     });
+
+    it('has the allows the fullscreen API', function() {
+      // Unfortunately we cannot check the fullscreen API itself, because this test file
+      // is run in an iframe itself, which does not have allowfullscreen set... :-(
+      chai.expect(launcher.children[0].getAttribute('allowfullscreen')).to.be.ok;
+    });
   });
 });
