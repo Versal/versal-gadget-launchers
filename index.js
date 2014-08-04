@@ -98,7 +98,7 @@ prototype.handleMessage = function(event) {
       handler.call(this, data);
     } else {
       console.error('Unknown event received: ' + eventName);
-      this.fireCustomEvent('error', {message: 'Unknown event received: ' + eventName});
+      this.error({message: 'Unknown event received: ' + eventName});
     }
   }
 };
