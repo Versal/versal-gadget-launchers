@@ -186,7 +186,7 @@ Set the emptiness (placeholder) status of the gadget.
 
 ### track
 
-Send analytics and tracking information.<br>
+Send analytics and tracking information. *Bubbles up the DOM tree.*<br>
 @type (required) is the name of the tracking event.
 
 ```
@@ -201,7 +201,7 @@ Send analytics and tracking information.<br>
 
 ### error
 
-Throw a rendering-time error.
+Throw a rendering-time error. *Bubbles up the DOM tree.*
 
 ```
 {
