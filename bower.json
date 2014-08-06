@@ -16,6 +16,9 @@
   "devDependencies": {
     "mocha": "~1.18",
     "chai": "~1.9",
-    "versal-component-runtime": "~0.2.2"
+    "versal-component-runtime": "~0.2.2",
+    "underscore": "~1.6.0",
+    "backbone": "~1.1.2",
+    "jquery": "~2.1.1"
   }
 }
