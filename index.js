@@ -123,6 +123,7 @@ prototype.handleMessage = function(event) {
 };
 
 prototype.sendMessage = function(eventName, data) {
+  if (!this._listening) return;
   if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
 
   var message = { event: eventName };
@@ -142,6 +143,7 @@ prototype.fireCustomEvent = function(eventName, data, options) {
 
 prototype.messageHandlers = {
   startListening: function(){
+    this._listening = true;
     this.sendMessage('environmentChanged', this.env);
     this.sendMessage('attributesChanged', this.config);
     this.sendMessage('learnerStateChanged', this.userstate);

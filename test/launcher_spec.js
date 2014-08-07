@@ -14,7 +14,23 @@ describe('iframe launcher', function() {
     document.body.removeChild(launcher);
   });
 
+  it("doesn't send events before starting to listen", function(done) {
+    window.gadgetLoaded = function() {
+      launcher.setAttribute('data-config', '{"test": "something"}');
+      window.recordPlayerEvent = function(eventMessage) {
+        done("No events should be fired");
+      };
+      setTimeout(done, 100);
+    }
+  });
+
   describe('player events', function() {
+    before(function() {
+      window.gadgetLoaded = function() {
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      }
+    });
+
     it('sends a bunch of initial events', function(done) {
       var recordedEvents = [];
 
@@ -98,6 +114,9 @@ describe('iframe launcher', function() {
   describe('gadget events', function() {
 
     beforeEach(function(done){
+      window.gadgetLoaded = function() {
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      }
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
           done();

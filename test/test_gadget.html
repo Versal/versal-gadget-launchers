@@ -11,5 +11,5 @@
     window.parent.postMessage(eventMessage, '*');
   };
 
-  sendGadgetEvent({event: 'startListening'});
+  window.parent.gadgetLoaded();
 </script>
