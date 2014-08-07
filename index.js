@@ -69,6 +69,10 @@ prototype.log = function(dir, event, data) {
   if(this.debug) { console.log(dir, event, data); }
 };
 
+prototype.createdCallback = function() {
+  this._previousMessages = {}
+};
+
 prototype.attachedCallback = function(){
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.src;
@@ -82,31 +86,21 @@ prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
 };
 
-prototype.JSONAttributeHasChanged = function(oldAttribute, newAttribute) {
-  return !JSONDeepEquals(JSON.parse(oldAttribute), JSON.parse(newAttribute));
-};
-
 prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
-      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
-        this.sendMessage('editableChanged', { editable: this.editable });
-        if(this.apiVersion.minor < 1) {
-          this.sendMessage('setEditable', { editable: this.editable });
-        }
+      this.sendMessage('editableChanged', { editable: this.editable });
+      if(this.apiVersion.minor < 1) {
+        this.sendMessage('setEditable', { editable: this.editable });
       }
       break;
 
     case 'data-config':
-      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
-        this.sendMessage('attributesChanged', this.config);
-      }
+      this.sendMessage('attributesChanged', this.config);
       break;
 
     case 'data-userstate':
-      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
-        this.sendMessage('learnerStateChanged', this.userstate);
-      }
+      this.sendMessage('learnerStateChanged', this.userstate);
       break;
   }
 };
@@ -129,11 +123,14 @@ prototype.handleMessage = function(event) {
 };
 
 prototype.sendMessage = function(eventName, data) {
+  if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
+
   var message = { event: eventName };
   if(data) { message.data = data; }
   if(this.iframe && this.iframe.contentWindow) {
     this.iframe.contentWindow.postMessage(message, '*');
     this.log('↘', message.event, message.data);
+    this._previousMessages[eventName] = data;
   }
 };
 
