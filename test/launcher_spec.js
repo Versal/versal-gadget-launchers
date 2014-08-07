@@ -94,6 +94,18 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
+    it('sends attributesChanged after receiving setAttributes', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'attributesChanged' &&
+              eventMessage.data.test2 == 'new-config') {
+          done();
+        }
+      };
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {test2: 'new-config'}});
+    });
+
     it('patches userstate when receiving setLearnerState', function(done) {
       var observer = new MutationObserver(function() {
         chai.expect(launcher.userstate).to.deep.eq(
@@ -102,6 +114,18 @@ describe('iframe launcher', function() {
         done();
       });
       observer.observe(launcher, {attributes: true});
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setLearnerState', data: {test2: 'new-userstate'}});
+    });
+
+    it('sends learnerStateChanged after receiving setLearnerState', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'learnerStateChanged' &&
+              eventMessage.data.test2 == 'new-userstate') {
+          done();
+        }
+      };
 
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setLearnerState', data: {test2: 'new-userstate'}});
