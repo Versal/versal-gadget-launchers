@@ -46,6 +46,18 @@ describe('iframe launcher', function() {
       };
     });
 
+    it('doesnt send attributesChanged when data-config doesnt really change', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'editableChanged') {
+          window.recordPlayerEvent = function(eventMessage) {
+            if (eventMessage.event == 'attributesChanged') done("attributesChanged should not be called");
+          }
+          launcher.setAttribute('data-config', '{"test"   :    "initial-config"}');
+        }
+      };
+      setTimeout(done, 100);
+    });
+
     it('sends learnerStateChanged when data-userstate changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
@@ -56,6 +68,18 @@ describe('iframe launcher', function() {
           done();
         }
       };
+    });
+
+    it('doesnt send learnerStateChanged when data-userstate doesnt really change', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'editableChanged') {
+          window.recordPlayerEvent = function(eventMessage) {
+            if (eventMessage.event == 'learnerStateChanged') done("learnerStateChanged should not be called");
+          }
+          launcher.setAttribute('data-userstate', '{"test"   :    "initial-userstate"}');
+        }
+      };
+      setTimeout(done, 100);
     });
 
     it('sends editableChanged when editable changes', function(done) {

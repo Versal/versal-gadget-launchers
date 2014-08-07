@@ -10,6 +10,21 @@ var patch = function(to, from) {
   return to;
 };
 
+var JSONDeepEquals = function(o1, o2) {
+  if (typeof o1 !== "object" || typeof o1 !== typeof o2 || o1 == null || o2 == null) {
+    return o1 === o2;
+  }
+
+  var k1 = Object.keys(o1).sort();
+  var k2 = Object.keys(o2).sort();
+  if (k1.length != k2.length) return false;
+
+  for (var i=0; i<k1.length; i++) {
+    if (!JSONDeepEquals(o1[k1[i]], o2[k2[i]])) return false;
+  }
+  return true;
+}
+
 var prototype = Object.create(HTMLElement.prototype, {
   src: {
     get: function(){ return this.getAttribute('src') || 'about:blank'; }
@@ -65,23 +80,33 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
-}
+};
 
-prototype.attributeChangedCallback = function(name){
+prototype.JSONAttributeHasChanged = function(oldAttribute, newAttribute) {
+  return !JSONDeepEquals(JSON.parse(oldAttribute), JSON.parse(newAttribute));
+};
+
+prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
-      this.sendMessage('editableChanged', { editable: this.editable });
-      if(this.apiVersion.minor < 1) {
-        this.sendMessage('setEditable', { editable: this.editable });
+      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
+        this.sendMessage('editableChanged', { editable: this.editable });
+        if(this.apiVersion.minor < 1) {
+          this.sendMessage('setEditable', { editable: this.editable });
+        }
       }
       break;
 
     case 'data-config':
-      this.sendMessage('attributesChanged', this.config);
+      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
+        this.sendMessage('attributesChanged', this.config);
+      }
       break;
 
     case 'data-userstate':
-      this.sendMessage('learnerStateChanged', this.userstate);
+      if (this.JSONAttributeHasChanged(oldAttribute, newAttribute)) {
+        this.sendMessage('learnerStateChanged', this.userstate);
+      }
       break;
   }
 };
