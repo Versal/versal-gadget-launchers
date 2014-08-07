@@ -149,6 +149,22 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
+    it('only sends one attributesChanged after to immediately subsequent setAttributes events', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'attributesChanged' &&
+              eventMessage.data.value == 2) {
+          done();
+        } else {
+          done('attributesChanged should only fire with {value: 2}, not: ' + JSON.stringify(eventMessage));
+        }
+      };
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {value: 1}});
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {value: 2}});
+    });
+
     it('patches userstate when receiving setLearnerState', function(done) {
       var observer = new MutationObserver(function() {
         chai.expect(launcher.userstate).to.deep.eq(

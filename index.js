@@ -84,6 +84,8 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
+  window.clearTimeout(this._attributesChangedTimeout);
+  window.clearTimeout(this._learnerStateChangedTimeout);
 };
 
 prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
@@ -96,11 +98,17 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
       break;
 
     case 'data-config':
-      this.sendMessage('attributesChanged', this.config);
+      window.clearTimeout(this._attributesChangedTimeout);
+      this._attributesChangedTimeout = window.setTimeout((function() {
+        this.sendMessage('attributesChanged', this.config);
+      }).bind(this));
       break;
 
     case 'data-userstate':
-      this.sendMessage('learnerStateChanged', this.userstate);
+      window.clearTimeout(this._learnerStateChangedTimeout);
+      this._learnerStateChangedTimeout = window.setTimeout((function() {
+        this.sendMessage('learnerStateChanged', this.userstate);
+      }).bind(this));
       break;
   }
 };
