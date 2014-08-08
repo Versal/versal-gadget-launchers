@@ -10,6 +10,21 @@ var patch = function(to, from) {
   return to;
 };
 
+var JSONDeepEquals = function(o1, o2) {
+  if (typeof o1 !== "object" || typeof o1 !== typeof o2 || o1 == null || o2 == null) {
+    return o1 === o2;
+  }
+
+  var k1 = Object.keys(o1).sort();
+  var k2 = Object.keys(o2).sort();
+  if (k1.length != k2.length) return false;
+
+  for (var i=0; i<k1.length; i++) {
+    if (!JSONDeepEquals(o1[k1[i]], o2[k2[i]])) return false;
+  }
+  return true;
+}
+
 var prototype = Object.create(HTMLElement.prototype, {
   src: {
     get: function(){ return this.getAttribute('src') || 'about:blank'; }
@@ -54,6 +69,10 @@ prototype.log = function(dir, event, data) {
   if(this.debug) { console.log(dir, event, data); }
 };
 
+prototype.createdCallback = function() {
+  this._previousMessages = {}
+};
+
 prototype.attachedCallback = function(){
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.src;
@@ -65,9 +84,11 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
-}
+  window.clearTimeout(this._attributesChangedTimeout);
+  window.clearTimeout(this._learnerStateChangedTimeout);
+};
 
-prototype.attributeChangedCallback = function(name){
+prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
@@ -77,11 +98,17 @@ prototype.attributeChangedCallback = function(name){
       break;
 
     case 'data-config':
-      this.sendMessage('attributesChanged', this.config);
+      window.clearTimeout(this._attributesChangedTimeout);
+      this._attributesChangedTimeout = window.setTimeout((function() {
+        this.sendMessage('attributesChanged', this.config);
+      }).bind(this));
       break;
 
     case 'data-userstate':
-      this.sendMessage('learnerStateChanged', this.userstate);
+      window.clearTimeout(this._learnerStateChangedTimeout);
+      this._learnerStateChangedTimeout = window.setTimeout((function() {
+        this.sendMessage('learnerStateChanged', this.userstate);
+      }).bind(this));
       break;
   }
 };
@@ -104,11 +131,15 @@ prototype.handleMessage = function(event) {
 };
 
 prototype.sendMessage = function(eventName, data) {
+  if (!this._listening) return;
+  if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
+
   var message = { event: eventName };
   if(data) { message.data = data; }
   if(this.iframe && this.iframe.contentWindow) {
     this.iframe.contentWindow.postMessage(message, '*');
     this.log('↘', message.event, message.data);
+    this._previousMessages[eventName] = data;
   }
 };
 
@@ -120,6 +151,7 @@ prototype.fireCustomEvent = function(eventName, data, options) {
 
 prototype.messageHandlers = {
   startListening: function(){
+    this._listening = true;
     this.sendMessage('environmentChanged', this.env);
     this.sendMessage('attributesChanged', this.config);
     this.sendMessage('learnerStateChanged', this.userstate);

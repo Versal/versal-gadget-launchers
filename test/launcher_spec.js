@@ -14,7 +14,23 @@ describe('iframe launcher', function() {
     document.body.removeChild(launcher);
   });
 
+  it("doesn't send events before starting to listen", function(done) {
+    window.gadgetLoaded = function() {
+      launcher.setAttribute('data-config', '{"test": "something"}');
+      window.recordPlayerEvent = function(eventMessage) {
+        done("No events should be fired");
+      };
+      setTimeout(done, 100);
+    }
+  });
+
   describe('player events', function() {
+    before(function() {
+      window.gadgetLoaded = function() {
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      }
+    });
+
     it('sends a bunch of initial events', function(done) {
       var recordedEvents = [];
 
@@ -46,6 +62,18 @@ describe('iframe launcher', function() {
       };
     });
 
+    it('doesnt send attributesChanged when data-config doesnt really change', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'editableChanged') {
+          window.recordPlayerEvent = function(eventMessage) {
+            if (eventMessage.event == 'attributesChanged') done("attributesChanged should not be called");
+          }
+          launcher.setAttribute('data-config', '{"test"   :    "initial-config"}');
+        }
+      };
+      setTimeout(done, 100);
+    });
+
     it('sends learnerStateChanged when data-userstate changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
@@ -56,6 +84,18 @@ describe('iframe launcher', function() {
           done();
         }
       };
+    });
+
+    it('doesnt send learnerStateChanged when data-userstate doesnt really change', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'editableChanged') {
+          window.recordPlayerEvent = function(eventMessage) {
+            if (eventMessage.event == 'learnerStateChanged') done("learnerStateChanged should not be called");
+          }
+          launcher.setAttribute('data-userstate', '{"test"   :    "initial-userstate"}');
+        }
+      };
+      setTimeout(done, 100);
     });
 
     it('sends editableChanged when editable changes', function(done) {
@@ -74,6 +114,9 @@ describe('iframe launcher', function() {
   describe('gadget events', function() {
 
     beforeEach(function(done){
+      window.gadgetLoaded = function() {
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      }
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
           done();
@@ -94,6 +137,34 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
+    it('sends attributesChanged after receiving setAttributes', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'attributesChanged' &&
+              eventMessage.data.test2 == 'new-config') {
+          done();
+        }
+      };
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {test2: 'new-config'}});
+    });
+
+    it('only sends one attributesChanged after to immediately subsequent setAttributes events', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'attributesChanged' &&
+              eventMessage.data.value == 2) {
+          done();
+        } else {
+          done('attributesChanged should only fire with {value: 2}, not: ' + JSON.stringify(eventMessage));
+        }
+      };
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {value: 1}});
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {value: 2}});
+    });
+
     it('patches userstate when receiving setLearnerState', function(done) {
       var observer = new MutationObserver(function() {
         chai.expect(launcher.userstate).to.deep.eq(
@@ -102,6 +173,18 @@ describe('iframe launcher', function() {
         done();
       });
       observer.observe(launcher, {attributes: true});
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setLearnerState', data: {test2: 'new-userstate'}});
+    });
+
+    it('sends learnerStateChanged after receiving setLearnerState', function(done) {
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'learnerStateChanged' &&
+              eventMessage.data.test2 == 'new-userstate') {
+          done();
+        }
+      };
 
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setLearnerState', data: {test2: 'new-userstate'}});
