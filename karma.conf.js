@@ -16,7 +16,8 @@ module.exports = function(config) {
       'bower_components/jquery/dist/jquery.js',
       {pattern: 'legacy-launcher/test_gadget/gadget.css', included: false},
       'legacy-launcher/mini_require.js',
-      'legacy-launcher/legacy-launcher.js',
+      'legacy-launcher/legacy-launcher.html',
+      {pattern: 'legacy-launcher/legacy-launcher.js', included: false},
       'legacy-launcher/legacy-launcher_spec.js'
     ],
     reporters: ['dots'],
