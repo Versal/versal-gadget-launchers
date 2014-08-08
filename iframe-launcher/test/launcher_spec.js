@@ -6,7 +6,7 @@ describe('iframe launcher', function() {
     launcher.setAttribute('data-environment', '{"test": "initial-environment"}');
     launcher.setAttribute('data-config', '{"test": "initial-config"}');
     launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
-    launcher.setAttribute('src', '/base/test/test_gadget.html');
+    launcher.setAttribute('src', '/base/iframe-launcher/test/test_gadget.html');
     document.body.appendChild(launcher);
   });
 

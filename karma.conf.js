@@ -3,10 +3,12 @@ module.exports = function(config) {
     frameworks: ['mocha', 'chai', 'sinon'],
     files: [
       'bower_components/versal-component-runtime/dist/runtime.min.js',
-      'index.html',
-      'test/*_spec.js',
-      {pattern: 'index.js', included: false},
-      {pattern: 'test/test_gadget.html', included: false},
+
+      // Iframe launcher
+      'iframe-launcher/iframe-launcher.html',
+      'iframe-launcher/test/*_spec.js',
+      {pattern: 'iframe-launcher/iframe-launcher.js', included: false},
+      {pattern: 'iframe-launcher/test/test_gadget.html', included: false},
 
       // Legacy launcher
       'bower_components/underscore/underscore.js',

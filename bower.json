@@ -1,16 +1,15 @@
 {
-  "name": "versal-iframe-launcher",
-  "version": "0.2.4",
+  "name": "versal-gadget-launchers",
+  "version": "0.3.0",
   "author": "Versal team <support@versal.com>",
-  "description": "Launcher for iframe gadgets on versal.com",
+  "description": "Various launchers for gadgets on versal.com",
   "main": "index.html",
   "license": "MIT",
-  "homepage": "http://github.com/Versal/iframe-launcher",
+  "homepage": "http://github.com/Versal/versal-gadget-launchers",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
     "package.json"
   ],
   "devDependencies": {

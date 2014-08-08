@@ -30,7 +30,7 @@ bower install versal-component-runtime versal-iframe-launcher
 
 Complete example is available at `demo.html`.
 
-# Gadget API v0.2.1
+# Gadget API
 
 To use Versal Gadget API first of all you have to send 'startListening' event. You can send this event after all your modules are loaded and initialized, and gadget is ready to do the job.
 
