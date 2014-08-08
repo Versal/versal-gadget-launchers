@@ -7,10 +7,12 @@
   "devDependencies": {
     "chai": "*",
     "karma": "*",
-    "karma-cli": "*",
     "karma-chai": "*",
+    "karma-cli": "*",
     "karma-firefox-launcher": "*",
     "karma-mocha": "*",
-    "mocha": "*"
+    "karma-sinon": "*",
+    "mocha": "*",
+    "sinon": "*"
   }
 }
