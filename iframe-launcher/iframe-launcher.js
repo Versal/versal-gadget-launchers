@@ -160,6 +160,10 @@ prototype.messageHandlers = {
 
   setHeight: function(data){
     this.iframe.style.height = data.pixels + 'px';
+    if (!this._firedRendered) {
+      this._firedRendered = true;
+      this.fireCustomEvent('rendered');
+    }
   },
 
   setAttributes: function(data){
