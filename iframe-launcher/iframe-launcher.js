@@ -190,11 +190,14 @@ prototype.messageHandlers = {
   },
 
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
-  setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
   track: function(data) { this.fireCustomEvent('track', data, {bubbles: true}); },
   error: function(data) { this.fireCustomEvent('error', data, {bubbles: true}); },
-  changeBlocking: function(data) { this.fireCustomEvent('changeBlocking', data); },
-  requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); }
+  requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); },
+
+  // Soon to be deprecated in favour of in-iframe APIs
+  // E.g. https://github.com/Versal/challenges-js-api/
+  setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
+  changeBlocking: function(data) { this.fireCustomEvent('changeBlocking', data); }
 };
 
 window.addEventListener('message', function(event){
