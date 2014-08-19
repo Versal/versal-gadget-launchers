@@ -1,6 +1,4 @@
 {
-  "name": "versal-gadget-launchers",
-  "version": "0.3.0",
   "scripts": {
     "test": "karma start --browsers Firefox --single-run"
   },
