@@ -88,7 +88,6 @@ describe('Legacy gadget launcher', function() {
       }, {silent: true});
       options.config.save();
       expect(stub.firstCall.args[0].detail).to.deep.eq({
-        test: 'initial-config',
         foo: 'barz',
         bar: 123
       });
@@ -101,7 +100,6 @@ describe('Legacy gadget launcher', function() {
         bar: 123
       });
       expect(stub.firstCall.args[0].detail).to.deep.eq({
-        test: 'initial-config',
         foo: 'barz',
         bar: 123
       });
@@ -114,7 +112,6 @@ describe('Legacy gadget launcher', function() {
         bar: 123
       });
       expect(stub.firstCall.args[0].detail).to.deep.eq({
-        test: 'initial-userstate',
         foo: 'barz',
         bar: 123
       });
