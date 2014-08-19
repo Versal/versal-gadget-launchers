@@ -104,6 +104,20 @@ describe('Legacy gadget launcher', function() {
         bar: 123
       });
     });
+    it('triggers setAttributes with the difference when changing an object by reference', function() {
+      var stub = sinon.stub();
+      launcher.addEventListener('setAttributes', stub);
+
+      var myObject = {};
+      options.config.set({myObject: myObject});
+      options.config.set({somethingElse: 1});
+      myObject.hi = 'hi';
+      options.config.save();
+      expect(stub.thirdCall.args[0].detail).to.deep.eq({
+        myObject: {hi: 'hi'},
+        somethingElse: 1
+      });
+    });
     it('triggers setLearnerState', function() {
       var stub = sinon.stub();
       launcher.addEventListener('setLearnerState', stub);
@@ -114,6 +128,18 @@ describe('Legacy gadget launcher', function() {
       expect(stub.firstCall.args[0].detail).to.deep.eq({
         foo: 'barz',
         bar: 123
+      });
+    });
+    it('triggers setLearnerState with all changes when calling userState.set twice', function() {
+      var stub = sinon.stub();
+      launcher.addEventListener('setLearnerState', stub);
+
+      var myObject = {};
+      options.userState.set({first: 1});
+      options.userState.set({second: 2});
+      expect(stub.secondCall.args[0].detail).to.deep.eq({
+        first: 1,
+        second: 2
       });
     });
     it('triggers setPropertySheetAttributes', function() {
