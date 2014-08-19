@@ -15,7 +15,7 @@
   "devDependencies": {
     "versal-component-runtime": "~0.2.2",
     "underscore": "~1.6.0",
-    "backbone": "~1.1.2",
+    "backbone": "1.0.0",
     "jquery": "~2.1.1"
   }
 }
