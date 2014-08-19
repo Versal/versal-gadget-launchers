@@ -148,7 +148,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     });
     this._userstate.on('change', (function(model, opts) {
       if (opts.source !== 'player') {
-        this._fireCustomEvent('setLearnerState', model.toJSON());
+        this._fireCustomEvent('setLearnerState', model.changedAttributes() || {});
       }
     }).bind(this));
 
@@ -287,7 +287,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
   prototype._onGadgetTriggeredSave = function(model, opts) {
     opts = opts || {};
     if (opts.source !== 'player') {
-      this._fireCustomEvent('setAttributes', model.toJSON());
+      this._fireCustomEvent('setAttributes', model.changedAttributes() || {});
     }
   };
   prototype._fireError = function(data) {
