@@ -74,12 +74,18 @@ prototype.createdCallback = function() {
 };
 
 prototype.attachedCallback = function(){
-  this.iframe = document.createElement('iframe');
+  this.iframe = document.createElement('div');
+  this.iframe.innerHTML = '<vs-texthd></vs-texthd>';
   this.iframe.src = this.src;
-  this.iframe.addEventListener('message', this.handleMessage.bind(this));
-  this.iframe.setAttribute('allowfullscreen', 'allowfullscreen');
+  this.addEventListener('message', this.handleMessage.bind(this));
 
   this.appendChild(this.iframe);
+
+  //relative paths is always relative to the main document!
+  var link = document.createElement('link');
+  link.rel = 'import';
+  link.href = 'http://localhost:3000/api/gadgets/local/texthd/0.0.1/vs-texthd/dist/vs-texthd.html';
+  document.head.appendChild(link);
 };
 
 prototype.detachedCallback = function(){
@@ -130,6 +136,22 @@ prototype.handleMessage = function(event) {
   }
 };
 
+/**
+ * [postMessageFake mimic postMessage interface with CustomEvents]
+ * @param  {[string]} message [Data to be sent to the other window.
+ *                            i.e. {"data": "realData"}
+ *                            The data is serialized using the structured clone algorithm. ]
+ * @param  {[string]} targetOrigin [description]
+ * @return {[undefined]}
+ */
+var postMessageFake = function(message, targetOrigin){
+  // create and dispatch the event
+  var event = new CustomEvent("message", {
+      "detail": message
+    });
+  this.dispatchEvent(event);
+};
+
 prototype.sendMessage = function(eventName, data) {
   if (!this._listening) return;
   if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
@@ -140,6 +162,18 @@ prototype.sendMessage = function(eventName, data) {
     this.iframe.contentWindow.postMessage(message, '*');
     this.log('↘', message.event, message.data);
     this._previousMessages[eventName] = data;
+  }
+
+  //trigger message on the component directly
+  var childComponent;
+  if(this.iframe) {
+    childComponent = this.iframe.querySelector('vs-texthd');
+    childComponent.postMessageFake = postMessageFake;
+    childComponent.postMessageFake(message, '*');
+    this.log('↘', message.event, message.data);
+  } else {
+    // TODO
+    // should we wait and send the message again
   }
 };
 
