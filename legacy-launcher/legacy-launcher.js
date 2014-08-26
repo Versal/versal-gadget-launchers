@@ -295,7 +295,9 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
   prototype._onGadgetTriggeredSave = function(model, opts) {
     opts = opts || {};
     if (opts.source !== 'player') {
-      this._fireCustomEvent('setAttributes', findDeepChangedAttributes(model.toJSON(), this.config));
+      if (this.editingAllowed) {
+        this._fireCustomEvent('setAttributes', findDeepChangedAttributes(model.toJSON(), this.config));
+      }
     }
   };
   prototype._fireError = function(data) {
