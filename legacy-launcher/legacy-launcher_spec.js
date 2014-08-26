@@ -79,7 +79,19 @@ describe('Legacy gadget launcher', function() {
       options.player.trigger('configEmpty');
       expect(stub.called).to.be["true"];
     });
+    it('doesnt trigger setAttributes when editing-allowed is not set', function() {
+
+      var stub = sinon.stub();
+      launcher.addEventListener('setAttributes', stub);
+      options.config.set({
+        foo: 'barz',
+        bar: 123
+      });
+      expect(stub.firstCall).to.not.exist;
+    });
     it('setting values silently prior to save triggers setAttributes', function() {
+      launcher.setAttribute('editing-allowed', 'editing-allowed');
+
       var stub = sinon.stub();
       launcher.addEventListener('setAttributes', stub);
       options.config.set({
@@ -93,6 +105,8 @@ describe('Legacy gadget launcher', function() {
       });
     });
     it('triggers setAttributes', function() {
+      launcher.setAttribute('editing-allowed', 'editing-allowed');
+
       var stub = sinon.stub();
       launcher.addEventListener('setAttributes', stub);
       options.config.set({
@@ -105,6 +119,8 @@ describe('Legacy gadget launcher', function() {
       });
     });
     it('triggers setAttributes with the difference when changing an object by reference', function() {
+      launcher.setAttribute('editing-allowed', 'editing-allowed');
+
       var stub = sinon.stub();
       launcher.addEventListener('setAttributes', stub);
 
