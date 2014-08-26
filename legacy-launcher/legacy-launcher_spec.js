@@ -48,7 +48,7 @@ describe('Legacy gadget launcher', function() {
         baz: 'barz'
       });
     });
-    it('handle slearnerStateChanged', function() {
+    it('handles learnerStateChanged', function() {
       launcher.setAttribute('data-userstate', JSON.stringify({
         foo: 'bar',
         baz: 'barz'
