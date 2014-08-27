@@ -87,7 +87,7 @@ describe('Legacy gadget launcher', function() {
         foo: 'barz',
         bar: 123
       });
-      expect(stub.firstCall).to.not.exist;
+      expect(stub.called).to.be.false;
     });
     it('setting values silently prior to save triggers setAttributes', function() {
       launcher.setAttribute('editing-allowed', 'editing-allowed');
