@@ -1,8 +1,3 @@
-var Semver = function(ver) {
-  var segs = ver.split('.');
-  return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
-};
-
 var patch = function(to, from) {
   Object.keys(from).forEach(function(key){
     to[key] = from[key];
@@ -23,40 +18,15 @@ var JSONDeepEquals = function(o1, o2) {
     if (!JSONDeepEquals(o1[k1[i]], o2[k2[i]])) return false;
   }
   return true;
-}
+};
 
 var prototype = Object.create(HTMLElement.prototype, {
-  src: {
-    get: function(){ return this.getAttribute('src') || 'about:blank'; }
-  },
-
   editable: {
     get: function(){ return this.getAttribute('editable') == 'true'; }
   },
 
-  env: {
-    get: function(){ return this.readAttributeAsJson('data-environment'); }
-  },
-
   config: {
     get: function(){ return this.readAttributeAsJson('data-config'); }
-  },
-
-  userstate: {
-    get: function(){ return this.readAttributeAsJson('data-userstate'); }
-  },
-
-  debug: {
-    get: function(){ return this.hasAttribute('debug'); }
-  },
-
-  apiVersion: {
-    get: function(){
-      if(!this._apiVersion) {
-        this._apiVersion = new Semver(this.getAttribute('data-api-version') || '0.0.0');
-      };
-      return this._apiVersion;
-    }
   }
 });
 
@@ -70,7 +40,7 @@ prototype.log = function(dir, event, data) {
 };
 
 prototype.createdCallback = function() {
-  this._previousMessages = {}
+  this._previousMessages = {};
 };
 
 prototype.attachedCallback = function(){
@@ -86,6 +56,8 @@ prototype.attachedCallback = function(){
   link.rel = 'import';
   link.href = 'http://localhost:3000/api/gadgets/local/texthd/0.0.1/vs-texthd/dist/vs-texthd.html';
   document.head.appendChild(link);
+
+  this.fireCustomEvent('rendered');
 };
 
 prototype.detachedCallback = function(){
@@ -98,9 +70,6 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
-      if(this.apiVersion.minor < 1) {
-        this.sendMessage('setEditable', { editable: this.editable });
-      }
       break;
 
     case 'data-config':
@@ -110,11 +79,7 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
       }).bind(this));
       break;
 
-    case 'data-userstate':
-      window.clearTimeout(this._learnerStateChangedTimeout);
-      this._learnerStateChangedTimeout = window.setTimeout((function() {
-        this.sendMessage('learnerStateChanged', this.userstate);
-      }).bind(this));
+    default:
       break;
   }
 };
@@ -136,20 +101,32 @@ prototype.handleMessage = function(event) {
   }
 };
 
-/**
- * [postMessageFake mimic postMessage interface with CustomEvents]
- * @param  {[string]} message [Data to be sent to the other window.
- *                            i.e. {"data": "realData"}
- *                            The data is serialized using the structured clone algorithm. ]
- * @param  {[string]} targetOrigin [description]
- * @return {[undefined]}
- */
-var postMessageFake = function(message, targetOrigin){
-  // create and dispatch the event
-  var event = new CustomEvent("message", {
-      "detail": message
-    });
-  this.dispatchEvent(event);
+var updateChildAttributes = function(message, childComponent){
+  switch (message.event) {
+    case 'environmentChanged':
+      childComponent.setAttribute('data-environment', JSON.stringify(message.data));
+      break;
+
+    //special case
+    case 'editableChanged':
+      if(message.data.editable) {
+        childComponent.setAttribute('editable', 'true');
+      } else {
+        childComponent.removeAttribute('editable');
+      }
+      break;
+
+    case 'attributesChanged':
+      childComponent.setAttribute('data-config', JSON.stringify(message.data));
+      break;
+
+    case 'learnerStateChanged':
+      childComponent.setAttribute('data-userstate', JSON.stringify(message.data));
+      break;
+
+    default:
+      break;
+  }
 };
 
 prototype.sendMessage = function(eventName, data) {
@@ -168,8 +145,7 @@ prototype.sendMessage = function(eventName, data) {
   var childComponent;
   if(this.iframe) {
     childComponent = this.iframe.querySelector('vs-texthd');
-    childComponent.postMessageFake = postMessageFake;
-    childComponent.postMessageFake(message, '*');
+    updateChildAttributes(message, childComponent);
     this.log('↘', message.event, message.data);
   } else {
     // TODO
@@ -192,14 +168,6 @@ prototype.messageHandlers = {
     this.sendMessage('editableChanged', { editable: this.editable });
   },
 
-  setHeight: function(data){
-    this.iframe.style.height = data.pixels + 'px';
-    if (!this._firedRendered) {
-      this._firedRendered = true;
-      this.fireCustomEvent('rendered');
-    }
-  },
-
   setAttributes: function(data){
     var config = this.readAttributeAsJson('data-config');
     patch(config, data);
@@ -207,44 +175,7 @@ prototype.messageHandlers = {
 
     // Player needs those events, until we have mutation observers in place
     this.fireCustomEvent('setAttributes', config);
-  },
-
-  setLearnerState: function(data) {
-    var userstate = this.readAttributeAsJson('data-userstate');
-    patch(userstate, data);
-    this.setAttribute('data-userstate', JSON.stringify(userstate));
-
-    // Player needs those events, until we have mutation observers in place
-    this.fireCustomEvent('setLearnerState', userstate);
-  },
-
-  getPath: function(data) {
-    console.warn('getPath/setPath are obsolete');
-    var assetUrlTemplate = this.env && this.env.assetUrlTemplate;
-    if(assetUrlTemplate) {
-      var url = assetUrlTemplate.replace('<%= id %>', data.assetId );
-      this.sendMessage('setPath', { url: url});
-    }
-  },
-
-  setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
-  track: function(data) { this.fireCustomEvent('track', data, {bubbles: true}); },
-  error: function(data) { this.fireCustomEvent('error', data, {bubbles: true}); },
-  requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); },
-
-  // Soon to be deprecated in favour of in-iframe APIs
-  // E.g. https://github.com/Versal/challenges-js-api/
-  setEmpty: function(data) { this.fireCustomEvent('setEmpty', data); },
-  changeBlocking: function(data) { this.fireCustomEvent('changeBlocking', data); }
+  }
 };
-
-window.addEventListener('message', function(event){
-  var iframes = document.querySelectorAll('versal-iframe-launcher > iframe');
-  Array.prototype.forEach.call(iframes, function(iframe){
-    if(iframe.contentWindow == event.source) {
-      iframe.dispatchEvent(new CustomEvent('message', { detail: event.data }));
-    }
-  });
-});
 
 document.registerElement('versal-component-launcher', { prototype: prototype });
