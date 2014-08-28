@@ -247,4 +247,4 @@ window.addEventListener('message', function(event){
   });
 });
 
-document.registerElement('versal-iframe-launcher', { prototype: prototype });
+document.registerElement('versal-component-launcher', { prototype: prototype });
