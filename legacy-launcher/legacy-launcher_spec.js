@@ -36,7 +36,7 @@ describe('Legacy gadget launcher', function() {
       var stub = sinon.stub();
       options.player.on('toggleEdit', stub);
       launcher.setAttribute('editable', 'true');
-      expect(stub.firstCall.args[0]).to.be["true"];
+      expect(stub.firstCall.args[0]).to.eq(true);
     });
     it('handles attributesChanged', function() {
       launcher.setAttribute('data-config', JSON.stringify({
@@ -62,7 +62,7 @@ describe('Legacy gadget launcher', function() {
       var stub = sinon.stub();
       options.player.on('close', stub);
       document.body.removeChild(launcher);
-      expect(stub.called).to.be["false"];
+      expect(stub.called).to.eq(false);
     });
     it('sends "close" event when "should-fire-close-event-on-detached" is set', function(done) {
       options.player.on('close', function() {
@@ -77,7 +77,7 @@ describe('Legacy gadget launcher', function() {
       var stub = sinon.stub();
       launcher.addEventListener('setEmpty', stub);
       options.player.trigger('configEmpty');
-      expect(stub.called).to.be["true"];
+      expect(stub.called).to.eq(true);
     });
     it('doesnt trigger setAttributes when editing-allowed is not set', function() {
 
@@ -87,7 +87,7 @@ describe('Legacy gadget launcher', function() {
         foo: 'barz',
         bar: 123
       });
-      expect(stub.called).to.be.false;
+      expect(stub.called).to.eq(false);
     });
     it('setting values silently prior to save triggers setAttributes', function() {
       launcher.setAttribute('editing-allowed', 'editing-allowed');
@@ -186,7 +186,7 @@ describe('Legacy gadget launcher', function() {
   });
   describe('PlayerInterface', function() {
     it('should implement selectAsset', function() {
-      expect(_.isFunction(options.player.selectAsset)).to.be.true;
+      expect(_.isFunction(options.player.selectAsset)).to.eq(true);
     });
     describe('whitelisted events', function() {
       it('forwards asset:select', function() {
@@ -199,7 +199,7 @@ describe('Legacy gadget launcher', function() {
         var stub = sinon.stub();
         launcher.addEventListener('changeBlocking', stub);
         options.player.trigger('blocking:changed', 1, 2);
-        expect(stub.firstCall).to.exist;
+        expect(stub.called).to.eq(true);
       });
     });
     describe('#assetPath', function() {

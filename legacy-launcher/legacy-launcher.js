@@ -8,7 +8,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
   var LegacyPlayerInterface = function(options) {
     this.gadgetBaseUrl = options.gadgetBaseUrl;
     this._assetUrlTemplate = _.template(options.assetUrlTemplate);
-  }
+  };
   _.extend(LegacyPlayerInterface.prototype, Backbone.Events);
   LegacyPlayerInterface.prototype.selectAsset = function(type) {
     var dfd = $.Deferred();
@@ -71,7 +71,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
       this._gadgetInstanceUrl = options.gadgetInstanceUrl;
     },
     url: function() {
-      if (this._gadgetInstanceUrl == null) {
+      if (this._gadgetInstanceUrl === null) {
         throw 'No valid gadget url in GadgetUserStateAggregate';
       }
       return this._gadgetInstanceUrl + '/userstates';
@@ -144,13 +144,13 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
   prototype.createdCallback = function() {
     this.$el = $('<div>');
 
-    this._config = new LocalModel;
+    this._config = new LocalModel();
     // NOTE this serves the purpose of making sure attributes are saved
     // when @set is called with 'silent: true' before @save
     this._config.on('gadgetTriggeredSave', this._onGadgetTriggeredSave, this);
     this._config.on('change', this._onGadgetTriggeredSave, this);
 
-    this._userstate = new LocalModel;
+    this._userstate = new LocalModel();
     this._userstate.gadget = new Backbone.Model({
       id: 1337
     });
@@ -160,7 +160,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
       }
     }).bind(this));
 
-    this._propertySheetSchema = new LocalModel;
+    this._propertySheetSchema = new LocalModel();
     this._propertySheetSchema.on('change', (function(model, opts) {
       this._fireCustomEvent('setPropertySheetAttributes', model.toJSON());
     }).bind(this));
