@@ -44,12 +44,12 @@ prototype.createdCallback = function() {
 };
 
 prototype.attachedCallback = function(){
-  this.iframe = document.createElement('div');
-  this.iframe.innerHTML = '<vs-texthd></vs-texthd>';
-  this.iframe.src = this.src;
+  this.el = document.createElement('div');
+  this.el.innerHTML = '<vs-texthd></vs-texthd>';
+  this.el.src = this.src;
   this.addEventListener('message', this.handleMessage.bind(this));
 
-  this.appendChild(this.iframe);
+  this.appendChild(this.el);
 
   //relative paths is always relative to the main document!
   var link = document.createElement('link');
@@ -57,11 +57,44 @@ prototype.attachedCallback = function(){
   link.href = 'http://localhost:3000/api/gadgets/local/texthd/0.0.1/vs-texthd/dist/vs-texthd.html';
   document.head.appendChild(link);
 
+
+  var sendAttributesToPlayer = function(mutation){
+    console.log('mutation', mutation);
+    if(mutation.type === 'attributes') {
+      var newConfig = mutation.target.getAttribute('data-config');
+
+      // this.setAttribute('data-config', newConfig);
+
+      // Player needs those events, until we have mutation observers in place
+      this.fireCustomEvent('setAttributes', newConfig);
+    }
+  }.bind(this);
+
+  // select the target node
+  var target = this.el.querySelector('vs-texthd');
+
+  // create an observer instance
+  this.observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      console.log(mutation);
+      sendAttributesToPlayer(mutation);
+    });
+  });
+
+  // configuration of the observer:
+  var config = { attributes: true };
+
+  // pass in the target node, as well as the observer options
+  this.observer.observe(target, config);
+
   this.fireCustomEvent('rendered');
 };
 
 prototype.detachedCallback = function(){
-  this.removeChild(this.iframe);
+  // later, you can stop observing
+  this.observer.disconnect();
+
+  this.removeChild(this.el);
   window.clearTimeout(this._attributesChangedTimeout);
   window.clearTimeout(this._learnerStateChangedTimeout);
 };
@@ -135,18 +168,14 @@ prototype.sendMessage = function(eventName, data) {
 
   var message = { event: eventName };
   if(data) { message.data = data; }
-  if(this.iframe && this.iframe.contentWindow) {
-    this.iframe.contentWindow.postMessage(message, '*');
-    this.log('↘', message.event, message.data);
-    this._previousMessages[eventName] = data;
-  }
 
   //trigger message on the component directly
   var childComponent;
-  if(this.iframe) {
-    childComponent = this.iframe.querySelector('vs-texthd');
+  if(this.el) {
+    childComponent = this.el.querySelector('vs-texthd');
     updateChildAttributes(message, childComponent);
     this.log('↘', message.event, message.data);
+    this._previousMessages[eventName] = data;
   } else {
     // TODO
     // should we wait and send the message again
@@ -171,10 +200,10 @@ prototype.messageHandlers = {
   setAttributes: function(data){
     var config = this.readAttributeAsJson('data-config');
     patch(config, data);
-    this.setAttribute('data-config', JSON.stringify(config));
+    // this.setAttribute('data-config', JSON.stringify(config));
 
     // Player needs those events, until we have mutation observers in place
-    this.fireCustomEvent('setAttributes', config);
+    // this.fireCustomEvent('setAttributes', config);
   }
 };
 
