@@ -1,9 +1,4 @@
-var patch = function(to, from) {
-  Object.keys(from).forEach(function(key){
-    to[key] = from[key];
-  });
-  return to;
-};
+/* global _ */
 
 var JSONDeepEquals = function(o1, o2) {
   if (typeof o1 !== "object" || typeof o1 !== typeof o2 || o1 == null || o2 == null) {
@@ -22,11 +17,15 @@ var JSONDeepEquals = function(o1, o2) {
 
 var prototype = Object.create(HTMLElement.prototype, {
   editable: {
-    get: function(){ return this.getAttribute('editable') == 'true'; }
+    get: function(){
+      return this.getAttribute('editable') == 'true';
+    }
   },
 
   config: {
-    get: function(){ return this.readAttributeAsJson('data-config'); }
+    get: function(){
+      return this.readAttributeAsJson('data-config');
+    }
   }
 });
 
@@ -40,15 +39,16 @@ prototype.log = function(dir, event, data) {
 };
 
 prototype.createdCallback = function() {
+  // a temp memory to avoid sending duplicated messages
   this._previousMessages = {};
 };
 
 prototype.attachedCallback = function(){
   this.el = document.createElement('div');
-  this.el.innerHTML = '<vs-texthd></vs-texthd>';
   this.el.src = this.src;
-  this.addEventListener('message', this.handleMessage.bind(this));
 
+  this.childComponent = document.createElement('vs-texthd');
+  this.el.appendChild(this.childComponent);
   this.appendChild(this.el);
 
   //relative paths is always relative to the main document!
@@ -57,27 +57,32 @@ prototype.attachedCallback = function(){
   link.href = 'http://localhost:3000/api/gadgets/local/texthd/0.0.1/vs-texthd/dist/vs-texthd.html';
   document.head.appendChild(link);
 
+  this.initObserver();
 
+  // necessary to remove spinner
+  this.fireCustomEvent('rendered');
+};
+
+prototype.initObserver = function(){
   var sendAttributesToPlayer = function(mutation){
-    console.log('mutation', mutation);
     if(mutation.type === 'attributes') {
       var newConfig = mutation.target.getAttribute('data-config');
 
-      // this.setAttribute('data-config', newConfig);
-
       // Player needs those events, until we have mutation observers in place
-      this.fireCustomEvent('setAttributes', newConfig);
+      this.fireCustomEvent('setAttributes', JSON.parse(newConfig));
     }
   }.bind(this);
 
+  // necessary to avoid infinite loop
+  var sendAttributesToPlayerThrottled = _.throttle(sendAttributesToPlayer, 200);
+
   // select the target node
-  var target = this.el.querySelector('vs-texthd');
+  var target = this.childComponent;
 
   // create an observer instance
   this.observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-      console.log(mutation);
-      sendAttributesToPlayer(mutation);
+      sendAttributesToPlayerThrottled(mutation);
     });
   });
 
@@ -86,30 +91,21 @@ prototype.attachedCallback = function(){
 
   // pass in the target node, as well as the observer options
   this.observer.observe(target, config);
-
-  this.fireCustomEvent('rendered');
 };
 
 prototype.detachedCallback = function(){
-  // later, you can stop observing
   this.observer.disconnect();
-
   this.removeChild(this.el);
-  window.clearTimeout(this._attributesChangedTimeout);
-  window.clearTimeout(this._learnerStateChangedTimeout);
 };
 
 prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
-      this.sendMessage('editableChanged', { editable: this.editable });
+      this.sendMessageToChild('editableChanged', { editable: this.editable });
       break;
 
     case 'data-config':
-      window.clearTimeout(this._attributesChangedTimeout);
-      this._attributesChangedTimeout = window.setTimeout((function() {
-        this.sendMessage('attributesChanged', this.config);
-      }).bind(this));
+      this.sendMessageToChild('attributesChanged', this.config);
       break;
 
     default:
@@ -117,29 +113,8 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   }
 };
 
-prototype.handleMessage = function(event) {
-  if(event.detail.event) {
-    var eventName = event.detail.event;
-    var data = event.detail.data;
-
-    this.log('↖', eventName, data);
-
-    var handler = this.messageHandlers[eventName];
-    if(handler) {
-      handler.call(this, data);
-    } else {
-      console.error('Unknown event received: ' + eventName);
-      this.error({message: 'Unknown event received: ' + eventName});
-    }
-  }
-};
-
-var updateChildAttributes = function(message, childComponent){
+var _updateChildAttributes = function(message, childComponent){
   switch (message.event) {
-    case 'environmentChanged':
-      childComponent.setAttribute('data-environment', JSON.stringify(message.data));
-      break;
-
     //special case
     case 'editableChanged':
       if(message.data.editable) {
@@ -153,32 +128,25 @@ var updateChildAttributes = function(message, childComponent){
       childComponent.setAttribute('data-config', JSON.stringify(message.data));
       break;
 
-    case 'learnerStateChanged':
-      childComponent.setAttribute('data-userstate', JSON.stringify(message.data));
-      break;
-
     default:
       break;
   }
 };
 
-prototype.sendMessage = function(eventName, data) {
-  if (!this._listening) return;
+prototype.sendMessageToChild = function(eventName, data) {
   if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
 
   var message = { event: eventName };
   if(data) { message.data = data; }
 
   //trigger message on the component directly
-  var childComponent;
-  if(this.el) {
-    childComponent = this.el.querySelector('vs-texthd');
-    updateChildAttributes(message, childComponent);
+  if(this.el && this.childComponent) {
+    _updateChildAttributes(message, this.childComponent);
     this.log('↘', message.event, message.data);
     this._previousMessages[eventName] = data;
   } else {
     // TODO
-    // should we wait and send the message again
+    // should we wait and send the message again?
   }
 };
 
@@ -186,25 +154,6 @@ prototype.fireCustomEvent = function(eventName, data, options) {
   options = options || {};
   var evt = new CustomEvent(eventName, { detail: data, bubbles: options.bubbles || false });
   this.dispatchEvent(evt);
-};
-
-prototype.messageHandlers = {
-  startListening: function(){
-    this._listening = true;
-    this.sendMessage('environmentChanged', this.env);
-    this.sendMessage('attributesChanged', this.config);
-    this.sendMessage('learnerStateChanged', this.userstate);
-    this.sendMessage('editableChanged', { editable: this.editable });
-  },
-
-  setAttributes: function(data){
-    var config = this.readAttributeAsJson('data-config');
-    patch(config, data);
-    // this.setAttribute('data-config', JSON.stringify(config));
-
-    // Player needs those events, until we have mutation observers in place
-    // this.fireCustomEvent('setAttributes', config);
-  }
 };
 
 document.registerElement('versal-component-launcher', { prototype: prototype });
