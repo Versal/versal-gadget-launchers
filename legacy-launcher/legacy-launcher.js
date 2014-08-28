@@ -273,11 +273,13 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     switch (name) {
       case 'editable':
         this._passEvent('toggleEdit', this.editable);
+        break;
       case 'data-config':
         this._config.clear({silent: true});
         this._config.set(this.config, {
           source: 'player'
         });
+        break;
       case 'data-userstate':
         this._userstate.clear({silent: true});
         this._userstate.set(this.userstate, {
@@ -287,6 +289,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
         // probably only for quiz gadget
         // see https://github.com/Versal/player/issues/1579#issuecomment-38737311
         this._userstate.trigger('sync');
+        break;
     }
   };
   prototype.setLegacyContainers = function(_containersInterface) {
