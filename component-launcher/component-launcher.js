@@ -35,15 +35,12 @@ prototype.readAttributeAsJson = function(name) {
 };
 
 prototype.log = function(dir, event, data) {
-  if(this.debug) { console.log(dir, event, data); }
+  if(this.debug) {
+    console.log(dir, event, data);
+  }
 };
 
 prototype.createdCallback = function() {
-  // a temp memory to avoid sending duplicated messages
-  this._previousMessages = {};
-};
-
-prototype.attachedCallback = function(){
   this.el = document.createElement('div');
   this.el.src = this.src;
 
@@ -51,6 +48,13 @@ prototype.attachedCallback = function(){
   this.el.appendChild(this.childComponent);
   this.appendChild(this.el);
 
+  // a temp memory to avoid sending duplicated messages
+  this._previousMessages = {};
+};
+
+prototype.attachedCallback = function(){
+  // TODO
+  // inject dynamically
   //relative paths is always relative to the main document!
   var link = document.createElement('link');
   link.rel = 'import';
@@ -59,6 +63,8 @@ prototype.attachedCallback = function(){
 
   this.initObserver();
 
+  this.initChild();
+
   // necessary to remove spinner
   this.fireCustomEvent('rendered');
 };
@@ -66,10 +72,8 @@ prototype.attachedCallback = function(){
 prototype.initObserver = function(){
   var sendAttributesToPlayer = function(mutation){
     if(mutation.type === 'attributes') {
-      var newConfig = mutation.target.getAttribute('data-config');
-
-      // Player needs those events, until we have mutation observers in place
-      this.fireCustomEvent('setAttributes', JSON.parse(newConfig));
+      var config = mutation.target.getAttribute('data-config');
+      this.fireCustomEvent('setAttributes', JSON.parse(config));
     }
   }.bind(this);
 
@@ -91,6 +95,11 @@ prototype.initObserver = function(){
 
   // pass in the target node, as well as the observer options
   this.observer.observe(target, config);
+};
+
+prototype.initChild = function(){
+  this.sendMessageToChild('editableChanged', { editable: this.editable });
+  this.sendMessageToChild('attributesChanged', this.config);
 };
 
 prototype.detachedCallback = function(){
@@ -136,8 +145,10 @@ var _updateChildAttributes = function(message, childComponent){
 prototype.sendMessageToChild = function(eventName, data) {
   if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
 
-  var message = { event: eventName };
-  if(data) { message.data = data; }
+  var message = {
+    event: eventName,
+    data: data
+  };
 
   //trigger message on the component directly
   if(this.el && this.childComponent) {
@@ -145,6 +156,7 @@ prototype.sendMessageToChild = function(eventName, data) {
     this.log('↘', message.event, message.data);
     this._previousMessages[eventName] = data;
   } else {
+    console.log('↘ fake', eventName, data);
     // TODO
     // should we wait and send the message again?
   }
