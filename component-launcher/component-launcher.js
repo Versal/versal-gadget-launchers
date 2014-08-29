@@ -16,6 +16,14 @@ var prototype = Object.create(HTMLElement.prototype, {
     get: function(){
       return this.getAttribute('src') || 'about:blank';
     }
+  },
+
+  // TODO
+  // pass this from the player
+  componentName: {
+    get: function(){
+      return this.getAttribute('component-name');
+    }
   }
 });
 
@@ -24,24 +32,14 @@ prototype.readAttributeAsJson = function(name) {
   return JSON.parse(this.getAttribute(name));
 };
 
-prototype.log = function(dir, event, data) {
-  if(this.debug) {
-    console.log(dir, event, data);
-  }
-};
-
 prototype.createdCallback = function() {
-  this.el = document.createElement('div');
-  this.el.src = this.src;
-
-  // TODO
-  // replace vs-texthd with a variable passed from player
-  this.childComponent = document.createElement('vs-texthd');
-  this.el.appendChild(this.childComponent);
-  this.appendChild(this.el);
+  var componentName = this.componentName || 'vs-texthd';
+  this.childComponent = document.createElement(componentName);
+  this.appendChild(this.childComponent);
 };
 
 prototype.attachedCallback = function(){
+  // import versal.html which has definitions for custom elements
   var link = document.createElement('link');
   link.rel = 'import';
   link.href = this.src;
@@ -90,7 +88,7 @@ prototype.initChild = function(){
 
 prototype.detachedCallback = function(){
   this.observer.disconnect();
-  this.removeChild(this.el);
+  this.removeChild(this.childComponent);
 };
 
 prototype.setChildEditable = function(){
@@ -105,7 +103,7 @@ prototype.setChildConfig = function(){
   this.childComponent.setAttribute('data-config', JSON.stringify(this.config));
 };
 
-prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
+prototype.attributeChangedCallback = function(name){
   switch(name) {
     case 'editable':
       this.setChildEditable();
