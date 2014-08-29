@@ -10,6 +10,12 @@ var prototype = Object.create(HTMLElement.prototype, {
     get: function(){
       return this.readAttributeAsJson('data-config');
     }
+  },
+
+  src: {
+    get: function(){
+      return this.getAttribute('src') || 'about:blank';
+    }
   }
 });
 
@@ -28,18 +34,17 @@ prototype.createdCallback = function() {
   this.el = document.createElement('div');
   this.el.src = this.src;
 
+  // TODO
+  // replace vs-texthd with a variable passed from player
   this.childComponent = document.createElement('vs-texthd');
   this.el.appendChild(this.childComponent);
   this.appendChild(this.el);
 };
 
 prototype.attachedCallback = function(){
-  // TODO
-  // inject dynamically
-  //relative paths is always relative to the main document!
   var link = document.createElement('link');
   link.rel = 'import';
-  link.href = 'http://localhost:3000/api/gadgets/local/texthd/0.0.1/vs-texthd/dist/vs-texthd.html';
+  link.href = this.src;
   document.head.appendChild(link);
 
   this.initObserver();
