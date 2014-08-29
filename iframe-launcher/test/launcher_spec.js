@@ -21,14 +21,14 @@ describe('iframe launcher', function() {
         done("No events should be fired");
       };
       setTimeout(done, 100);
-    }
+    };
   });
 
   describe('player events', function() {
     before(function() {
       window.gadgetLoaded = function() {
         launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
-      }
+      };
     });
 
     it('sends a bunch of initial events', function(done) {
@@ -67,7 +67,7 @@ describe('iframe launcher', function() {
         if (eventMessage.event == 'editableChanged') {
           window.recordPlayerEvent = function(eventMessage) {
             if (eventMessage.event == 'attributesChanged') done("attributesChanged should not be called");
-          }
+          };
           launcher.setAttribute('data-config', '{"test"   :    "initial-config"}');
         }
       };
@@ -91,7 +91,7 @@ describe('iframe launcher', function() {
         if (eventMessage.event == 'editableChanged') {
           window.recordPlayerEvent = function(eventMessage) {
             if (eventMessage.event == 'learnerStateChanged') done("learnerStateChanged should not be called");
-          }
+          };
           launcher.setAttribute('data-userstate', '{"test"   :    "initial-userstate"}');
         }
       };
@@ -116,7 +116,7 @@ describe('iframe launcher', function() {
     beforeEach(function(done){
       window.gadgetLoaded = function() {
         launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
-      }
+      };
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
           done();
@@ -263,7 +263,7 @@ describe('iframe launcher', function() {
     it('allows the fullscreen API', function() {
       // Unfortunately we cannot check the fullscreen API itself, because this test file
       // is run in an iframe itself, which does not have allowfullscreen set... :-(
-      chai.expect(launcher.children[0].getAttribute('allowfullscreen')).to.be.ok;
+      chai.expect(launcher.children[0].getAttribute('allowfullscreen')).to.eq('allowfullscreen');
     });
   });
 });
