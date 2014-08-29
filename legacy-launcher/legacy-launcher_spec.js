@@ -58,6 +58,12 @@ describe('Legacy gadget launcher', function() {
         baz: 'barz'
       });
     });
+    it('doesnt leak old attributes into the config when setting editable', function() {
+      options.config.clear({silent: true});
+      options.config.set({something: 'else'});
+      launcher.setAttribute('editable', 'true');
+      expect(options.config.toJSON()).to.deep.eq({something: 'else'});
+    });
     it('doesnt send "close" event by default', function() {
       var stub = sinon.stub();
       options.player.on('close', stub);
