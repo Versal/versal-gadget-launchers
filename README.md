@@ -8,6 +8,7 @@ This contains the different launchers for gadgets on [Versal](versal.com). Curre
 All code is licensed under the [MIT License](LICENSE).
 
 ## Changelog
+- **0.3.4** Legacy Launcher: fixed bug where sometimes old attributes were set again
 - **0.3.3** Legacy Launcher: only fire setAttributes when `editing-allowed` is set (https://github.com/Versal/versal-gadget-launchers/pull/35)
 - **0.3.2** Legacy Launcher: more changed attributes fixes (https://github.com/Versal/versal-gadget-launchers/pull/30)
 - **0.3.1** Legacy Launcher: only send changed attributes to player (https://github.com/Versal/versal-gadget-launchers/pull/29)
