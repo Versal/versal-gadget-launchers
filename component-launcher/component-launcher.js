@@ -1,20 +1,4 @@
 /* global _ */
-
-var JSONDeepEquals = function(o1, o2) {
-  if (typeof o1 !== "object" || typeof o1 !== typeof o2 || o1 == null || o2 == null) {
-    return o1 === o2;
-  }
-
-  var k1 = Object.keys(o1).sort();
-  var k2 = Object.keys(o2).sort();
-  if (k1.length != k2.length) return false;
-
-  for (var i=0; i<k1.length; i++) {
-    if (!JSONDeepEquals(o1[k1[i]], o2[k2[i]])) return false;
-  }
-  return true;
-};
-
 var prototype = Object.create(HTMLElement.prototype, {
   editable: {
     get: function(){
@@ -47,9 +31,6 @@ prototype.createdCallback = function() {
   this.childComponent = document.createElement('vs-texthd');
   this.el.appendChild(this.childComponent);
   this.appendChild(this.el);
-
-  // a temp memory to avoid sending duplicated messages
-  this._previousMessages = {};
 };
 
 prototype.attachedCallback = function(){
@@ -98,8 +79,8 @@ prototype.initObserver = function(){
 };
 
 prototype.initChild = function(){
-  this.sendMessageToChild('editableChanged', { editable: this.editable });
-  this.sendMessageToChild('attributesChanged', this.config);
+  this.setChildEditable();
+  this.setChildConfig();
 };
 
 prototype.detachedCallback = function(){
@@ -107,58 +88,28 @@ prototype.detachedCallback = function(){
   this.removeChild(this.el);
 };
 
+prototype.setChildEditable = function(){
+  if(this.editable) {
+    this.childComponent.setAttribute('editable', 'true');
+  } else {
+    this.childComponent.removeAttribute('editable');
+  }
+};
+
+prototype.setChildConfig = function(){
+  this.childComponent.setAttribute('data-config', JSON.stringify(this.config));
+};
+
 prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
-      this.sendMessageToChild('editableChanged', { editable: this.editable });
+      this.setChildEditable();
       break;
-
     case 'data-config':
-      this.sendMessageToChild('attributesChanged', this.config);
+      this.setChildConfig();
       break;
-
     default:
       break;
-  }
-};
-
-var _updateChildAttributes = function(message, childComponent){
-  switch (message.event) {
-    //special case
-    case 'editableChanged':
-      if(message.data.editable) {
-        childComponent.setAttribute('editable', 'true');
-      } else {
-        childComponent.removeAttribute('editable');
-      }
-      break;
-
-    case 'attributesChanged':
-      childComponent.setAttribute('data-config', JSON.stringify(message.data));
-      break;
-
-    default:
-      break;
-  }
-};
-
-prototype.sendMessageToChild = function(eventName, data) {
-  if (JSONDeepEquals(this._previousMessages[eventName], data)) return;
-
-  var message = {
-    event: eventName,
-    data: data
-  };
-
-  //trigger message on the component directly
-  if(this.el && this.childComponent) {
-    _updateChildAttributes(message, this.childComponent);
-    this.log('↘', message.event, message.data);
-    this._previousMessages[eventName] = data;
-  } else {
-    console.log('↘ fake', eventName, data);
-    // TODO
-    // should we wait and send the message again?
   }
 };
 
