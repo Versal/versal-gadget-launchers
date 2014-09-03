@@ -262,7 +262,11 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     }
   };
   prototype.attachedCallback = function() {
-    this._loadGadgetCode(this.gadgetBaseUrl);
+    if (this.gadgetBaseUrl) {
+      this._loadGadgetCode(this.gadgetBaseUrl);
+    } else {
+      console.warn('Empty gadgetBaseUrl for ' + this.gadgetCssClassName);
+    }
   };
   prototype.detachedCallback = function() {
     if (this.shouldFireCloseEventOnDetached) {
