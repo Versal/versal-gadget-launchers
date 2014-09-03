@@ -45,14 +45,6 @@ prototype.attachedCallback = function(){
   link.href = this.src;
   document.head.appendChild(link);
 
-  // ckeditor needs absolute path to ckeditor.js under CKEDITOR_BASEPATH
-  // the choices are either set a global variable here
-  // or pass this.src down to the vs-texthd component
-  // for performance reason, better to set this global variable as early as possible
-  if(this.componentName === null || this.componentName === 'vs-texthd') {
-    window.CKEDITOR_BASEPATH = this.src.replace('versal.html', 'ckeditor/');
-  }
-
   this.initObserver();
 
   this.initChild();
