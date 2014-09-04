@@ -1,4 +1,3 @@
-/* global _ */
 var prototype = Object.create(HTMLElement.prototype, {
   editable: {
     get: function(){
@@ -59,30 +58,21 @@ prototype.attachedCallback = function(){
 
 prototype.initObserver = function(){
   var sendAttributesToPlayer = function(mutation){
-    if(mutation.type === 'attributes') {
+    if(mutation.type === 'attributes' && mutation.attributeName === 'data-config') {
       var config = mutation.target.getAttribute('data-config');
       this.fireCustomEvent('setAttributes', JSON.parse(config));
     }
   }.bind(this);
 
-  // necessary to avoid infinite loop
-  var sendAttributesToPlayerThrottled = _.throttle(sendAttributesToPlayer, 200);
-
-  // select the target node
-  var target = this.childComponent;
-
   // create an observer instance
   this.observer = new MutationObserver(function(mutations) {
     mutations.forEach(function(mutation) {
-      sendAttributesToPlayerThrottled(mutation);
+      sendAttributesToPlayer(mutation);
     });
   });
 
-  // configuration of the observer:
-  var config = { attributes: true };
-
   // pass in the target node, as well as the observer options
-  this.observer.observe(target, config);
+  this.observer.observe(this.childComponent, { attributes: true });
 };
 
 prototype.initChild = function(){
@@ -104,7 +94,12 @@ prototype.setChildEditable = function(){
 };
 
 prototype.setChildConfig = function(){
-  this.childComponent.setAttribute('data-config', JSON.stringify(this.config));
+  // return if child component is already at the correct state
+  if(this.childComponent.getAttribute('data-config') === this.getAttribute('data-config')) {
+    return;
+  }
+
+  this.childComponent.setAttribute('data-config', this.getAttribute('data-config'));
 };
 
 prototype.attributeChangedCallback = function(name){
