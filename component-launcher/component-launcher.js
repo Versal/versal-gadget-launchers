@@ -34,7 +34,7 @@ prototype.readAttributeAsJson = function(name) {
 prototype.createdCallback = function() {
   var componentName = this.componentName || 'vs-texthd';
   if(componentName !== 'vs-texthd') {
-    console.error('Component Launcher is not ready for anything rather than textHD');
+    console.error('Component Launcher is not ready for anything rather than vs-texthd');
     return;
   }
   this.childComponent = document.createElement(componentName);
@@ -56,10 +56,20 @@ prototype.attachedCallback = function(){
   this.fireCustomEvent('rendered');
 };
 
+prototype.childAtSameStateAsLauncher = function(){
+  return this.childComponent.getAttribute('data-config') === this.getAttribute('data-config');
+};
+
 prototype.initObserver = function(){
   var sendAttributesToPlayer = function(mutation){
     if(mutation.type === 'attributes' && mutation.attributeName === 'data-config') {
       var config = mutation.target.getAttribute('data-config');
+
+      // return if child component is already at the correct state
+      if(this.childAtSameStateAsLauncher()) {
+        return;
+      }
+
       this.fireCustomEvent('setAttributes', JSON.parse(config));
     }
   }.bind(this);
@@ -95,7 +105,7 @@ prototype.setChildEditable = function(){
 
 prototype.setChildConfig = function(){
   // return if child component is already at the correct state
-  if(this.childComponent.getAttribute('data-config') === this.getAttribute('data-config')) {
+  if(this.childAtSameStateAsLauncher()) {
     return;
   }
 
