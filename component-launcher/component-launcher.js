@@ -34,6 +34,10 @@ prototype.readAttributeAsJson = function(name) {
 
 prototype.createdCallback = function() {
   var componentName = this.componentName || 'vs-texthd';
+  if(componentName !== 'vs-texthd') {
+    console.error('Component Launcher is not ready for anything rather than textHD');
+    return;
+  }
   this.childComponent = document.createElement(componentName);
   this.appendChild(this.childComponent);
 };
