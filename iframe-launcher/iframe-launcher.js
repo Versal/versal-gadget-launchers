@@ -88,6 +88,7 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
+  this._previousMessages = {};
   window.clearTimeout(this._attributesChangedTimeout);
   window.clearTimeout(this._learnerStateChangedTimeout);
 };

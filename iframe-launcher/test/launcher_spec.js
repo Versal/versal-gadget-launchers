@@ -111,6 +111,27 @@ describe('iframe launcher', function() {
     });
   });
 
+  describe('detaching and attaching again', function(){
+
+    it('should send initial events again', function(done){
+      window.gadgetLoaded = function() {
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      };
+
+      var eventCount = 0;
+
+      window.recordPlayerEvent = function(eventMessage){
+        eventCount++;
+        // After first 4 events, detach launcher and attach it again.
+        if(eventCount == 4) {
+          document.body.removeChild(launcher);
+          setTimeout(function(){ document.body.appendChild(launcher); }, 1);
+        };
+        if(eventCount == 8) { done(); }
+      };
+    });
+  });
+
   describe('gadget events', function() {
 
     beforeEach(function(done){
