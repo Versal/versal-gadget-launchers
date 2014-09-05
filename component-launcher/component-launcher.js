@@ -61,7 +61,7 @@ prototype.attachedCallback = function(){
   this.fireCustomEvent('rendered');
 };
 
-prototype.childAtSameStateAsLauncher = function(){
+prototype.childHasSameConfigAsLauncher = function(){
   return this.childComponent.getAttribute('data-config') === this.getAttribute('data-config');
 };
 
@@ -71,10 +71,12 @@ prototype.initObserver = function(){
       var config = mutation.target.getAttribute('data-config');
 
       // return if child component is already at the correct state
-      if(this.childAtSameStateAsLauncher()) {
+      if(this.childHasSameConfigAsLauncher()) {
         return;
       }
 
+      this.setAttribute('data-config', config);
+      // Player needs this event, until we have mutation observers in place
       this.fireCustomEvent('setAttributes', JSON.parse(config));
     }
   }.bind(this);
@@ -105,7 +107,7 @@ prototype.setChildEditable = function(editable){
 
 prototype.setChildConfig = function(){
   // return if child component is already at the correct state
-  if(this.childAtSameStateAsLauncher()) {
+  if(this.childHasSameConfigAsLauncher()) {
     return;
   }
 
