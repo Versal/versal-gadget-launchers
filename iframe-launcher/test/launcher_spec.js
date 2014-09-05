@@ -50,6 +50,20 @@ describe('iframe launcher', function() {
       };
     });
 
+    it('sends initial events every time startListening is called', function(done){
+      var recordedEvents = [];
+      window.recordPlayerEvent = function(eventMessage){
+        recordedEvents.push(eventMessage);
+        if(recordedEvents.length == 8) {
+          chai.expect(recordedEvents.length).to.equal(8);
+          delete window.recordPlayerEvent;
+          done();
+        };
+      };
+
+      launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+    });
+
     it('sends attributesChanged when data-config changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
