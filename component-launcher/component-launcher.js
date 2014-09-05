@@ -54,7 +54,7 @@ prototype.attachedCallback = function(){
 
   this.initObserver();
 
-  this.setChildEditable();
+  this.setChildEditable(this.editable);
   this.setChildConfig();
 
   // necessary to remove spinner
@@ -95,8 +95,8 @@ prototype.detachedCallback = function(){
   this.removeChild(this.childComponent);
 };
 
-prototype.setChildEditable = function(){
-  if(this.editable) {
+prototype.setChildEditable = function(editable){
+  if(editable) {
     this.childComponent.setAttribute('editable', 'true');
   } else {
     this.childComponent.removeAttribute('editable');
@@ -115,7 +115,7 @@ prototype.setChildConfig = function(){
 prototype.attributeChangedCallback = function(name){
   switch(name) {
     case 'editable':
-      this.setChildEditable();
+      this.setChildEditable(this.editable);
       break;
     case 'data-config':
       this.setChildConfig();
