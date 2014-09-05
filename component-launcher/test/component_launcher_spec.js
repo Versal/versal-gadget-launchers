@@ -83,4 +83,30 @@ describe('iframe launcher', function() {
 
     launcher.setAttribute('data-config', JSON.stringify(newConfig));
   });
+
+  it("launcher -> child, passes editable to vs-texthd", function(done) {
+    var vsTest = document.querySelector('vs-texthd');
+    vsTest.attributeChangedCallback = function(attrName, oldVal, newVal){
+      expect( attrName ).to.equal('editable');
+      expect( oldVal ).to.equal(null);
+      expect( newVal ).to.equal('true');
+      done();
+    };
+
+    launcher.setAttribute('editable', 'true');
+  });
+
+  it("launcher -> child, passes non-editable to vs-texthd", function(done) {
+    var vsTest = document.querySelector('vs-texthd');
+    launcher.setAttribute('editable', 'true');
+
+    vsTest.attributeChangedCallback = function(attrName, oldVal, newVal){
+      expect( attrName ).to.equal('editable');
+      expect( oldVal ).to.equal('true');
+      expect( newVal ).to.equal(null);
+      done();
+    };
+
+    launcher.removeAttribute('editable');
+  });
 });
