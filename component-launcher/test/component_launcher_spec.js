@@ -26,15 +26,8 @@ describe('iframe launcher', function() {
     document.body.removeChild(launcher);
   });
 
-  it("inits one versal-component-launcher with one vs-texthd", function() {
-    expect(document.querySelectorAll('versal-component-launcher').length).to.equal(1);
+  it("inits one vs-texthd", function() {
     expect(document.querySelectorAll('vs-texthd').length).to.equal(1);
-  });
-
-  it("inits versal-component-launcher with default config", function() {
-    var launcherInstance = document.querySelector('versal-component-launcher');
-    expect( launcherInstance.getAttribute('data-config') ).to.equal( '{"test": "initial-config"}' );
-    expect( launcherInstance.getAttribute('src') ).to.equal( '/base/component-launcher/test/test_gadget.html' );
   });
 
   it("inits vs-texthd with default config", function() {
