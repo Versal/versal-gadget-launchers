@@ -42,15 +42,20 @@ prototype.createdCallback = function() {
 };
 
 prototype.attachedCallback = function(){
-  // import versal.html which has definitions for custom elements
-  var link = document.createElement('link');
-  link.rel = 'import';
-  link.href = this.src;
-  document.head.appendChild(link);
+  // only import once
+  var childImportSelector = 'link[href="' + this.src + '"]';
+  if(!document.querySelectorAll(childImportSelector).length) {
+    // import versal.html which has definitions for custom elements
+    var link = document.createElement('link');
+    link.rel = 'import';
+    link.href = this.src;
+    document.head.appendChild(link);
+  }
 
   this.initObserver();
 
-  this.initChild();
+  this.setChildEditable();
+  this.setChildConfig();
 
   // necessary to remove spinner
   this.fireCustomEvent('rendered');
@@ -83,11 +88,6 @@ prototype.initObserver = function(){
 
   // pass in the target node, as well as the observer options
   this.observer.observe(this.childComponent, { attributes: true });
-};
-
-prototype.initChild = function(){
-  this.setChildEditable();
-  this.setChildConfig();
 };
 
 prototype.detachedCallback = function(){
