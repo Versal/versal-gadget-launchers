@@ -120,8 +120,6 @@ prototype.attributeChangedCallback = function(name){
     case 'data-config':
       this.setChildConfig();
       break;
-    default:
-      break;
   }
 };
 
