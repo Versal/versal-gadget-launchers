@@ -41,6 +41,7 @@ describe('iframe launcher', function() {
     launcher.addEventListener('setAttributes', function(payload){
       var detail = payload.detail;
       expect(detail).to.deep.equal(newConfig);
+      expect(launcher.config).to.deep.equal(newConfig);
       done();
     }, false);
 
@@ -60,7 +61,7 @@ describe('iframe launcher', function() {
     launcher.setAttribute('data-config', JSON.stringify(newConfig));
   });
 
-  it("launcher -> child, child should NOT trigger 'setAttributes' when the launcher changes its config", function(done) {
+  it("launcher -> child, launcher should NOT re-trigger 'setAttributes' when the launcher changes its config", function(done) {
     var errTimeout = setTimeout(function(){
       expect(true).to.equal(true, 'this should be invoked when tests are passing');
       done();
