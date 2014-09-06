@@ -55,7 +55,7 @@ prototype.attachedCallback = function(){
   this.initObserver();
 
   this.setChildEditable(this.editable);
-  this.setChildConfig();
+  this.childComponent.setAttribute('data-config', this.getAttribute('data-config'));
 
   // necessary to remove spinner
   this.fireCustomEvent('rendered');
@@ -105,22 +105,13 @@ prototype.setChildEditable = function(editable){
   }
 };
 
-prototype.setChildConfig = function(){
-  // return if child component is already at the correct state
-  if(this.childHasSameConfigAsLauncher()) {
-    return;
-  }
-
-  this.childComponent.setAttribute('data-config', this.getAttribute('data-config'));
-};
-
 prototype.attributeChangedCallback = function(name){
   switch(name) {
     case 'editable':
       this.setChildEditable(this.editable);
       break;
     case 'data-config':
-      this.setChildConfig();
+      this.childComponent.setAttribute('data-config', this.getAttribute('data-config'));
       break;
   }
 };
