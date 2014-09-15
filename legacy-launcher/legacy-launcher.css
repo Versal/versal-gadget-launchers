@@ -6,3 +6,9 @@ versal-legacy-launcher {
   overflow: hidden;
   position: relative;
 }
+
+versal-legacy-launcher img {
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
