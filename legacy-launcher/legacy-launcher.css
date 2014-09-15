@@ -8,3 +8,9 @@ versal-legacy-launcher {
   position: relative;
   max-width: 725px;
 }
+
+versal-legacy-launcher img {
+	max-width: 100%;
+	height: auto;
+	vertical-align: middle;
+}
