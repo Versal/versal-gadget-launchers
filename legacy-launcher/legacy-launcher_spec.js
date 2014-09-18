@@ -54,6 +54,22 @@ describe('Legacy gadget launcher', function() {
         baz: 'barz'
       });
     });
+    it('handles works with pre-set attributes (in this case by cloning the launcher node)', function(done) {
+      var otherLauncherContainer = document.createElement('div');
+      document.body.appendChild(otherLauncherContainer);
+
+      var otherLauncher = launcher.cloneNode(false);
+      otherLauncher.addEventListener('rendered', function() {
+        expect(window.gadgetOptions.config.toJSON()).to.deep.eq({
+          test: 'initial-config'
+        });
+
+        document.body.removeChild(otherLauncherContainer);
+        done();
+      });
+
+      otherLauncherContainer.appendChild(otherLauncher);
+    });
     it('handles learnerStateChanged', function() {
       launcher.setAttribute('data-userstate', JSON.stringify({
         foo: 'bar',

@@ -262,6 +262,9 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     }
   };
   prototype.attachedCallback = function() {
+    this.attributeChangedCallback('data-config');
+    this.attributeChangedCallback('data-userstate');
+
     if (this.gadgetBaseUrl) {
       this._loadGadgetCode(this.gadgetBaseUrl);
     } else {
