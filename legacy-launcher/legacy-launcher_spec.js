@@ -19,6 +19,12 @@ describe('Legacy gadget launcher', function() {
     document.body.appendChild(launcher);
   });
 
+  afterEach(function() {
+    if (document.body.contains(launcher)) {
+      document.body.removeChild(launcher);
+    }
+  });
+
   it('contains required properties in gadgetOptions', function() {
     expect(options).to.have.property('$el');
     expect(options).to.have.property('el');
@@ -47,6 +53,22 @@ describe('Legacy gadget launcher', function() {
         foo: 'bar',
         baz: 'barz'
       });
+    });
+    it('handles works with pre-set attributes (in this case by cloning the launcher node)', function(done) {
+      var otherLauncherContainer = document.createElement('div');
+      document.body.appendChild(otherLauncherContainer);
+
+      var otherLauncher = launcher.cloneNode(false);
+      otherLauncher.addEventListener('rendered', function() {
+        expect(window.gadgetOptions.config.toJSON()).to.deep.eq({
+          test: 'initial-config'
+        });
+
+        document.body.removeChild(otherLauncherContainer);
+        done();
+      });
+
+      otherLauncherContainer.appendChild(otherLauncher);
     });
     it('handles learnerStateChanged', function() {
       launcher.setAttribute('data-userstate', JSON.stringify({
