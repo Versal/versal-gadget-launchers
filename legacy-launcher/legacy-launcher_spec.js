@@ -19,6 +19,12 @@ describe('Legacy gadget launcher', function() {
     document.body.appendChild(launcher);
   });
 
+  afterEach(function() {
+    if (document.body.contains(launcher)) {
+      document.body.removeChild(launcher);
+    }
+  });
+
   it('contains required properties in gadgetOptions', function() {
     expect(options).to.have.property('$el');
     expect(options).to.have.property('el');
