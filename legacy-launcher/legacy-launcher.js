@@ -65,19 +65,6 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     }
   });
 
-  // state aggregate is used only by survey gadget so far
-  var GadgetUserStateAggregate = Backbone.Collection.extend({
-    initialize: function(models, options) {
-      this._gadgetInstanceUrl = options.gadgetInstanceUrl;
-    },
-    url: function() {
-      if (this._gadgetInstanceUrl === null) {
-        throw 'No valid gadget url in GadgetUserStateAggregate';
-      }
-      return this._gadgetInstanceUrl + '/userstates';
-    }
-  });
-
   var findDeepChangedAttributes = function(newObj, oldObj) {
     newObjClone = _.clone(newObj);
     for (var key in newObjClone) {
@@ -97,11 +84,6 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     gadgetCssClassName: {
       get: function() {
         return this.getAttribute("gadget-css-class-name") || "";
-      }
-    },
-    gadgetInstanceUrl: {
-      get: function() {
-        return this.getAttribute("gadget-instance-url") || "";
       }
     },
     editable: {
@@ -234,10 +216,10 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
       config: this._config,
       userState: this._userstate,
 
-      // Only for Survey gadget by Tekliner
-      userStates: new GadgetUserStateAggregate([], {
-        gadgetInstanceUrl: this.gadgetInstanceUrl
-      }),
+      // Only for Survey gadget by Tekliner, not actually used there
+      // any more, since way of getting aggregate data has changed
+      // since https://github.com/Versal/tekliner-gadgets/pull/404
+      userStates: new Backbone.Collection(),
 
       model: this._config,
 
