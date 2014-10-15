@@ -1,15 +1,20 @@
+function createLegacyLauncher(){
+  var launcher = document.createElement('versal-legacy-launcher');
+  launcher.setAttribute('data-environment', '{"test": "initial-environment", "assetUrlTemplate": "http://api/<%= id %>/foo"}');
+  launcher.setAttribute('data-config', '{"test": "initial-config"}');
+  launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
+  launcher.setAttribute('asset-url-template', '');
+  launcher.setAttribute('gadget-base-url', '/base/legacy-launcher/test_gadget');
+  launcher.setAttribute('gadget-instance-url', 'http://example.org');
+  return launcher;
+};
+
 describe('Legacy gadget launcher', function() {
   var launcher, options;
   launcher = options = null;
 
   beforeEach(function(done) {
-    launcher = document.createElement('versal-legacy-launcher');
-    launcher.setAttribute('data-environment', '{"test": "initial-environment", "assetUrlTemplate": "http://api/<%= id %>/foo"}');
-    launcher.setAttribute('data-config', '{"test": "initial-config"}');
-    launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
-    launcher.setAttribute('asset-url-template', '');
-    launcher.setAttribute('gadget-base-url', '/base/legacy-launcher/test_gadget');
-    launcher.setAttribute('gadget-instance-url', 'http://example.org');
+    launcher = createLegacyLauncher();
 
     launcher.addEventListener('rendered', function() {
       options = window.gadgetOptions;
