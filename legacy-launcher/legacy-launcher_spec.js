@@ -242,3 +242,34 @@ describe('Legacy gadget launcher', function() {
     });
   });
 });
+
+describe('Broadcasting events', function(){
+  var launcher1, launcher2;
+
+  beforeEach(function(done){
+    launcher1 = createLegacyLauncher();
+    launcher2 = createLegacyLauncher();
+
+    launcher2.addEventListener('rendered', function(){ done(); });
+
+    document.body.appendChild(launcher1);
+    document.body.appendChild(launcher2);
+  });
+
+  afterEach(function(){
+    if(document.body.contains(launcher1)) {
+      document.body.removeChild(launcher1);
+    }
+    if(document.body.contains(launcher2)) {
+      document.body.removeChild(launcher2);
+    }
+  });
+
+  it('receives broadcast event, sent by other gadget', function(done){
+    launcher1.playerInterface.on('broadcast:receive', function(data){
+      expect(data).to.equal('foo');
+      done()
+    });
+    launcher2.playerInterface.trigger('broadcast:send', 'foo');
+  });
+});
