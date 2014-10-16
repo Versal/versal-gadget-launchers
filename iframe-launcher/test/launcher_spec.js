@@ -213,6 +213,20 @@ describe('iframe launcher', function() {
         {event: 'setLearnerState', data: {test2: 'new-userstate'}});
     });
 
+    it('unsets learnerState that are set to null', function(done) {
+      var observer = new MutationObserver(function() {
+        chai.expect(launcher.userstate).to.deep.eq(
+          {test: 'initial-userstate'});
+        observer.disconnect();
+        done();
+      });
+
+      observer.observe(launcher, {attributes: true});
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setLearnerState', data: {testNull: null}});
+    });
+
     it('sends learnerStateChanged after receiving setLearnerState', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'learnerStateChanged' &&
