@@ -186,6 +186,20 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {value: 2}});
     });
 
+    it('unsets attributes that are set to null', function(done) {
+      var observer = new MutationObserver(function() {
+        chai.expect(launcher.config).to.deep.eq(
+          {test: 'initial-config'});
+        observer.disconnect();
+        done();
+      });
+
+      observer.observe(launcher, {attributes: true});
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {testNull: null}});
+    });
+
     it('patches userstate when receiving setLearnerState', function(done) {
       var observer = new MutationObserver(function() {
         chai.expect(launcher.userstate).to.deep.eq(

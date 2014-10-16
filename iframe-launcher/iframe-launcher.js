@@ -173,6 +173,15 @@ prototype.messageHandlers = {
 
   setAttributes: function(data){
     var config = this.readAttributeAsJson('data-config');
+
+    Object.keys(data).forEach(function(key) {
+      if (data[key] === null) {
+        // Setting config to undefined removes it from the config
+        data[key] = undefined;
+        config[key] = undefined;
+      }
+    });
+
     patch(config, data);
     this.setAttribute('data-config', JSON.stringify(config));
 
