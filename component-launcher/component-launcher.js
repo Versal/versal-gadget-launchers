@@ -38,10 +38,13 @@ prototype.createdCallback = function() {
     return;
   }
   this.childComponent = document.createElement(componentName);
-  this.appendChild(this.childComponent);
 };
 
 prototype.attachedCallback = function(){
+  //append childComponent in callback and remove it in detachedCallback
+  //necessary for gadget dragging to work
+  this.appendChild(this.childComponent);
+
   // only import once
   var childImportSelector = 'link[href="' + this.src + '"]';
   if(!document.querySelectorAll(childImportSelector).length) {
