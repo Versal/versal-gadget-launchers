@@ -80,6 +80,10 @@ prototype.initObserver = function(){
       if(this.childHasSameConfigAsLauncher()) {
         return;
       }
+      if(!this.editable) {
+        console.warn('Unable to setAttributes in the read-only state');
+        return;
+      }
 
       this.setAttribute('data-config', config);
       // Player needs this event, until we have mutation observers in place
