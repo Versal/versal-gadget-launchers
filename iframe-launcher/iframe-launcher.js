@@ -175,6 +175,10 @@ prototype.messageHandlers = {
   },
 
   setAttributes: function(data){
+    if(!this.editable) {
+      console.warn('Unable to setAttributes in the read-only state');
+      return;
+    }
     var config = this.readAttributeAsJson('data-config');
     patch(config, data);
     this.setAttribute('data-config', JSON.stringify(config));
