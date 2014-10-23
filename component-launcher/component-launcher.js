@@ -41,8 +41,6 @@ prototype.createdCallback = function() {
 };
 
 prototype.attachedCallback = function(){
-  //append childComponent in callback and remove it in detachedCallback
-  //necessary for gadget dragging to work
   this.appendChild(this.childComponent);
 
   // only import once
@@ -62,6 +60,11 @@ prototype.attachedCallback = function(){
 
   // necessary to remove spinner
   this.fireCustomEvent('rendered');
+};
+
+prototype.detachedCallback = function(){
+  this.observer.disconnect();
+  this.removeChild(this.childComponent);
 };
 
 prototype.childHasSameConfigAsLauncher = function(){
@@ -93,11 +96,6 @@ prototype.initObserver = function(){
 
   // pass in the target node, as well as the observer options
   this.observer.observe(this.childComponent, { attributes: true });
-};
-
-prototype.detachedCallback = function(){
-  this.observer.disconnect();
-  this.removeChild(this.childComponent);
 };
 
 prototype.setChildEditable = function(editable){
