@@ -171,8 +171,8 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
-    it('doesNOT sends attributesChanged after receiving setAttributes ' +
-       'in the learner mode', function(done) {
+    it('doesnt send attributesChanged after receiving setAttributes ' +
+       'in learner mode', function(done) {
       launcher.removeAttribute('editable');
 
       window.recordPlayerEvent = function(eventMessage) {
