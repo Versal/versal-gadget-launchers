@@ -7,6 +7,7 @@ describe('iframe launcher', function() {
     launcher.setAttribute('data-config', '{"test": "initial-config"}');
     launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
     launcher.setAttribute('src', '/base/iframe-launcher/test/test_gadget.html');
+    launcher.setAttribute('editable', 'true');
     document.body.appendChild(launcher);
   });
 
@@ -42,7 +43,7 @@ describe('iframe launcher', function() {
             {event: 'environmentChanged', data: {test: 'initial-environment'}},
             {event: 'attributesChanged', data: {test: 'initial-config'}},
             {event: 'learnerStateChanged', data: {test: 'initial-userstate'}},
-            {event: 'editableChanged', data: {editable: false}},
+            {event: 'editableChanged', data: {editable: true}},
           ]);
           delete window.recordPlayerEvent;
           done();
@@ -168,6 +169,26 @@ describe('iframe launcher', function() {
 
       launcher.children[0].contentWindow.sendGadgetEvent(
         {event: 'setAttributes', data: {test2: 'new-config'}});
+    });
+
+    it('doesnt send attributesChanged after receiving setAttributes ' +
+       'in learner mode', function(done) {
+      launcher.removeAttribute('editable');
+
+      window.recordPlayerEvent = function(eventMessage) {
+        if (eventMessage.event == 'attributesChanged' &&
+              eventMessage.data.test == 'new-config-test') {
+          return done( new Error("Unexpected attributesChanged fired for learner") );
+        }
+      };
+
+      //done() if recordPlayerEvent() is not invoked in 1 seconds
+      setTimeout(function(){
+        done();
+      }, 1000);
+
+      launcher.children[0].contentWindow.sendGadgetEvent(
+        {event: 'setAttributes', data: {test: 'new-config-test'}});
     });
 
     it('only sends one attributesChanged after to immediately subsequent setAttributes events', function(done) {
