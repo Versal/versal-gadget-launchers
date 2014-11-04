@@ -4,6 +4,7 @@ function createLegacyLauncher(){
   launcher.setAttribute('data-config', '{"test": "initial-config"}');
   launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
   launcher.setAttribute('asset-url-template', '');
+  launcher.setAttribute('gadget-css-class-name', 'foo-bar');
   launcher.setAttribute('gadget-base-url', '/base/legacy-launcher/test_gadget');
   launcher.setAttribute('gadget-instance-url', 'http://example.org');
   return launcher;
@@ -38,6 +39,11 @@ describe('Legacy gadget launcher', function() {
     expect(options).to.have.property('config');
     expect(options).to.have.property('userState');
   });
+
+  it('sets css class name on the element', function(){
+    expect(launcher.children[0].classList.contains('foo-bar')).to.be.true;
+  });
+
   it('contains gadgetBaseUrl in gadgetOptions', function() {
     expect(options.project).to.have.property('path');
     expect(options.project.path('blah')).to.equal('/base/legacy-launcher/test_gadget/blah');
