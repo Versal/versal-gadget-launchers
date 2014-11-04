@@ -180,8 +180,9 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     this._loadGadgetJsIfNeeded(gadgetBaseUrl);
   };
   prototype._gadgetOptions = function() {
+    var assetUrlTemplate = (this.env && this.env.assetUrlTemplate) || '';
     this.playerInterface = new LegacyPlayerInterface({
-      assetUrlTemplate: this.env.assetUrlTemplate,
+      assetUrlTemplate: assetUrlTemplate,
       gadgetBaseUrl: this.gadgetBaseUrl
     });
     this.playerInterface.isEditable = this.editingAllowed;
