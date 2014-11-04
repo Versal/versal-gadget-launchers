@@ -178,13 +178,7 @@ describe('iframe launcher', function() {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'attributesChanged' &&
               eventMessage.data.test == 'new-config-test') {
-          try{
-            //error out when this code is executed
-            expect(true, 'attributesChanged fired for learner').to.be.false;
-            done();
-          }catch(e){
-            done(e);
-          }
+          return done( new Error("Unexpected attributesChanged fired for learner") );
         }
       };
 
