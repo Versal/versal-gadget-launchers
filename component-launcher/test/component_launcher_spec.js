@@ -40,10 +40,7 @@ describe('iframe launcher', function() {
     var newConfig = {"test": "changed"};
 
     launcher.addEventListener('setAttributes', function(payload){
-      var detail = payload.detail;
-      expect(detail).to.deep.equal(newConfig);
-      expect(launcher.config).to.deep.equal(newConfig);
-      done();
+      done( new Error("Unexpected firing of setAttributes") );
     }, false);
 
     //wait for 1s and call it a day
