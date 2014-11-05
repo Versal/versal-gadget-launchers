@@ -1,3 +1,3 @@
 require.config({
-  baseUrl: '/base/legacy-launcher'
+  baseUrl: '/base/versal-gadget-launchers/legacy-launcher'
 });

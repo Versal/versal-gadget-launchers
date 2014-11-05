@@ -5,7 +5,7 @@ function createLegacyLauncher(){
   launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
   launcher.setAttribute('asset-url-template', '');
   launcher.setAttribute('gadget-css-class-name', 'foo-bar');
-  launcher.setAttribute('gadget-base-url', '/base/legacy-launcher/test_gadget');
+  launcher.setAttribute('gadget-base-url', '/base/versal-gadget-launchers/legacy-launcher/test_gadget');
   launcher.setAttribute('gadget-instance-url', 'http://example.org');
   return launcher;
 };
@@ -46,7 +46,7 @@ describe('Legacy gadget launcher', function() {
 
   it('contains gadgetBaseUrl in gadgetOptions', function() {
     expect(options.project).to.have.property('path');
-    expect(options.project.path('blah')).to.equal('/base/legacy-launcher/test_gadget/blah');
+    expect(options.project.path('blah')).to.equal('/base/versal-gadget-launchers/legacy-launcher/test_gadget/blah');
   });
   describe('receiving launcher events', function() {
     it('handles editableChanged (becomes toggleEdit)', function() {
