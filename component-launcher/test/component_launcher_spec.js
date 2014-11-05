@@ -14,7 +14,7 @@ describe('iframe launcher', function() {
   beforeEach(function(done) {
     launcher = document.createElement('versal-component-launcher');
     launcher.setAttribute('data-config', '{"test": "initial-config"}');
-    launcher.setAttribute('src', '/base/component-launcher/test/test_gadget.html');
+    launcher.setAttribute('src', '/base/versal-gadget-launchers/component-launcher/test/test_gadget.html');
     document.body.appendChild(launcher);
 
     promise.then(function(){
