@@ -4,6 +4,7 @@ module.exports = function(config) {
     basePath: '..',
     files: [
       'versal-component-runtime/dist/runtime.min.js',
+      'customevent-polyfill/customevent-polyfill.min.js',
 
       // Iframe launcher
       'versal-gadget-launchers/iframe-launcher/iframe-launcher.html',
