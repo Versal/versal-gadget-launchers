@@ -12,10 +12,10 @@
     "package.json"
   ],
   "devDependencies": {
-    "versal-component-runtime": "~0.2.2",
     "underscore": "~1.6.0",
     "backbone": "1.0.0",
-    "jquery": "~2.1.1"
+    "jquery": "~2.1.1",
+    "webcomponentsjs": "~0.5.1"
   },
   "dependencies": {
     "requirejs": "2.1.6",
