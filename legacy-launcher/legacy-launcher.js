@@ -88,12 +88,12 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     },
     editable: {
       get: function() {
-        return this.hasAttribute("editable");
+        return this.getAttribute("editable") == 'true';
       }
     },
     editingAllowed: {
       get: function() {
-        return this.hasAttribute("editing-allowed");
+        return this.getAttribute("editing-allowed") == 'true';
       }
     },
     shouldFireCloseEventOnDetached: {
