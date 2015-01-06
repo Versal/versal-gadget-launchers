@@ -159,6 +159,18 @@ describe('iframe launcher', function() {
         {event: 'setAttributes', data: {test2: 'new-config'}});
     });
 
+    it('does not fail when empty patch arrives in setAttributes', function(done){
+      try{
+        launcher.children[0].contentWindow.sendGadgetEvent({
+          event: 'setAttributes',
+          data: undefined
+        });
+        setTimeout(done, 1);
+      } catch(err) {
+        expect(true).to.be(false);
+      }
+    });
+
     it('sends attributesChanged after receiving setAttributes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'attributesChanged' &&
