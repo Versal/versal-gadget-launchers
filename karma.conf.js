@@ -10,7 +10,6 @@ module.exports = function(config) {
       'versal-gadget-launchers/iframe-launcher/iframe-launcher.html',
       'versal-gadget-launchers/iframe-launcher/test/*_spec.js',
       {pattern: 'versal-gadget-launchers/iframe-launcher/iframe-launcher.js', included: false},
-      {pattern: 'versal-gadget-launchers/iframe-launcher/iframe-launcher.css', included: false},
       {pattern: 'versal-gadget-launchers/iframe-launcher/test/test_gadget.html', included: false},
 
       // Component launcher
