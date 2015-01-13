@@ -5,6 +5,7 @@ module.exports = function(config) {
     files: [
       'customevent-polyfill/customevent-polyfill.min.js',
       'webcomponentsjs/webcomponents-lite.min.js',
+      'eventEmitter/EventEmitter.js',
 
       // Iframe launcher
       'versal-gadget-launchers/iframe-launcher/iframe-launcher.html',
@@ -18,6 +19,11 @@ module.exports = function(config) {
       {pattern: 'versal-gadget-launchers/component-launcher/component-launcher.js', included: false},
       {pattern: 'versal-gadget-launchers/component-launcher/component-launcher.css', included: false},
       {pattern: 'versal-gadget-launchers/component-launcher/test/test_gadget.html', included: false},
+
+      // Legacy iframe launcher
+      'versal-gadget-launchers/legacy-iframe-launcher/test/*_spec.js',
+      {pattern: 'versal-gadget-launchers/legacy-iframe-launcher/**/*', included: false},
+      'versal-gadget-api/versal-player-api.js',
 
       // Legacy launcher
       'underscore/underscore.js',

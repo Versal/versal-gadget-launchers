@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Legacy launcher</title>
+  <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../underscore/underscore.js"></script>
+  <script src="../../eventEmitter/EventEmitter.js"></script>
+  <script src="../../versal-gadget-api/versal-player-api.js"></script>
+  <link rel='import' href='../legacy-launcher/legacy-launcher.html' />
+  <style>
+  body { margin: 0; padding: 0; }
+  </style>
+</head>
+<body>
+
+<script>
+var player = new VersalPlayerAPI();
+var launcher = document.createElement('versal-legacy-launcher');
+
+player.on('environmentChanged', function(env){
+  // TODO: doesn't make much sense really.
+  // If it's not editable, just don't set editable to true.
+  launcher.setAttribute('editing-allowed', env.editingAllowed || false);
+  launcher.setAttribute('gadget-css-class-name', env.cssClassName);
+  launcher.setAttribute('gadget-base-url', env.baseUrl);
+  launcher.setAttribute('data-environment', JSON.stringify(env));
+
+  document.body.appendChild(launcher);
+
+  launcher.addEventListener('rendered', function(){
+    player.watchBodyHeight();
+  });
+
+  launcher.addEventListener('setAttributes', function(evt){
+    player.setAttributes(evt.detail);
+  });
+
+  launcher.addEventListener('setLearnerState', function(evt){
+    player.setLearnerState(evt.detail);
+  });
+});
+
+player.on('attributesChanged', function(attributes){
+  launcher.setAttribute('data-config', JSON.stringify(attributes));
+});
+
+player.on('learnerStateChanged', function(userstate){
+  launcher.setAttribute('data-userstate', JSON.stringify(userstate));
+});
+
+player.on('editableChanged', function(evt){
+  launcher.setAttribute('editable', evt.editable);
+});
+
+player.startListening();
+</script>
+</body>
+</html>

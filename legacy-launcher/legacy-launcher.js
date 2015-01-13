@@ -239,6 +239,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
       this.playerInterface.on('broadcast:send', this._broadcastEvent.bind(this));
 
       this.playerInterface.trigger('domReady');
+      this.attributeChangedCallback('editable');
     } catch (err) {
       this._fireError({
         message: 'Error when loading: ' + err,
