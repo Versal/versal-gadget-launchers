@@ -57,7 +57,6 @@ describe('legacy iframe launcher', function(){
 
     it('data-config', function(done){
       launcher.setAttribute('data-config', '{"x":"y"}');
-      // We must clear the stack so mutation observers have a chance to fire
       setTimeout(function(){
         expect(legacyLauncher.getAttribute('data-config')).to.eql('{"x":"y"}');
         done();
@@ -66,11 +65,100 @@ describe('legacy iframe launcher', function(){
 
     it('data-userstate', function(done){
       launcher.setAttribute('data-userstate', '{ "a": 1 }');
-      // We must clear the stack so mutation observers have a chance to fire
       setTimeout(function(){
         expect(legacyLauncher.getAttribute('data-userstate')).to.eql('{"a":1}');
         done();
       }, 1);
     });
   });
+
+  describe('changing config of legacy launcher must change attributes of iframe launcher', function(){
+    beforeEach(function(){
+      launcher.setAttribute('editable', 'true');
+    });
+
+    // It doesn't work. If you are to fix it - ever - you need to fix legacyLauncher's findDeepChangedAttributes
+    it.skip('unset config attribute', function(done){
+      legacyLauncher._config.unset('foo');
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-config')).to.eq('{}');
+        done();
+      }, 50)
+    });
+
+    it('set key of config to null', function(done){
+      legacyLauncher._config.set({ foo: null });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-config')).to.eq('{}');
+        done();
+      }, 50)
+    });
+
+    it('update config in one pass', function(done){
+      legacyLauncher._config.set({ a: 1, b: 2 });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-config')).to.eq('{"foo":"bar","a":1,"b":2}');
+        done();
+      }, 50)
+    });
+
+    it('update config in multiple passes', function(done){
+      legacyLauncher._config.set({ a: 3 });
+      legacyLauncher._config.set({ b: 4 });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-config')).to.eq('{"foo":"bar","a":3,"b":4}');
+        done();
+      }, 50)
+    });
+  });
+
+  describe('changing userstate of legacy launcher must change attributes of iframe launcher', function(){
+    beforeEach(function(){
+      // Redundant but illustrative. Gadget must not be editable in order to change userstate.
+      launcher.setAttribute('editable', 'false');
+    });
+
+    // It doesn't work. If you are to fix it - ever - you need to fix legacyLauncher's findDeepChangedAttributes
+    it.skip('unset userstate attribute', function(done){
+      legacyLauncher._userstate.unset('foo');
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-userstate')).to.eq('{}');
+        done();
+      }, 50)
+    });
+
+    it('set key of userstate to null', function(done){
+      legacyLauncher._userstate.set({ foo: null });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-userstate')).to.eq('{}');
+        done();
+      }, 50)
+    });
+
+    it('update userstate in one pass', function(done){
+      legacyLauncher._userstate.set({ a: 1, b: 2 });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-userstate')).to.eq('{"a":1,"b":2}');
+        done();
+      }, 50)
+    });
+
+    it('update userstate in multiple passes', function(done){
+      legacyLauncher._userstate.set({ a: 3 });
+      legacyLauncher._userstate.set({ b: 4 });
+
+      setTimeout(function(){
+        expect(launcher.getAttribute('data-userstate')).to.eq('{"a":3,"b":4}');
+        done();
+      }, 50)
+    });
+  });
+
 });

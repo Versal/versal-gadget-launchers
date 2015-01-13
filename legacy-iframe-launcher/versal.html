@@ -32,7 +32,11 @@ player.on('environmentChanged', function(env){
   });
 
   launcher.addEventListener('setAttributes', function(evt){
-    player.setAttributes(evt.data);
+    player.setAttributes(evt.detail);
+  });
+
+  launcher.addEventListener('setLearnerState', function(evt){
+    player.setLearnerState(evt.detail);
   });
 });
 
