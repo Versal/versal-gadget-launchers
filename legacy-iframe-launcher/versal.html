@@ -53,7 +53,6 @@ player.on('environmentChanged', function(env){
   });
 
   launcher.addEventListener('selectAsset', function(evt){
-    console.log('asset requested', evt.detail);
     player.requestAsset({ type: evt.detail.type }, evt.detail.success);
   });
 });
