@@ -193,8 +193,10 @@ describe('legacy iframe launcher', function(){
         success: function(){ done(); }
       });
 
-      // Simulate user uploading an asset
-      launcher.setAttribute('data-config', JSON.stringify({ '__asset__': { location: 'https://foo.bar' } }));
+      launcher.addEventListener('requestAsset', function(evt){
+        // When a user uploads an asset, asset json is passed back in attribute named "__asset__"
+        launcher.setAttribute('data-config', JSON.stringify({ '__asset__': { location: 'https://foo.bar' } }));
+      })
     });
   });
 });
