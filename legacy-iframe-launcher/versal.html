@@ -41,7 +41,7 @@ player.on('environmentChanged', function(env){
   });
 
   launcher.addEventListener('setPropertySheetAttributes', function(evt){
-    player.setPropertySheetAttributes(evt.detail);
+    player.setPropertySheetAttributes(_cleanupPropertySheetValidators(evt.detail));
   });
 
   launcher.addEventListener('setEmpty', function(evt){
@@ -70,6 +70,16 @@ player.on('editableChanged', function(evt){
 });
 
 player.startListening();
+
+function _cleanupPropertySheetValidators(schema) {
+  if(!_.isObject(schema)) return schema;
+
+  var cleanedUpSchema = _.chain(schema).pairs().map(function(pair){
+    return [pair[0], _.omit(pair[1], 'validators')];
+  }).object().value();
+
+  return cleanedUpSchema;
+}
 </script>
 </body>
 </html>

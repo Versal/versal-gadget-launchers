@@ -164,11 +164,20 @@ describe('legacy iframe launcher', function(){
   describe('some other APIs', function(){
     it('setPropertySheetAttributes', function(done){
       launcher.addEventListener('setPropertySheetAttributes', function(evt){
-        expect(evt.detail).to.eql({ foo: 'bar' });
+        expect(evt.detail).to.eql({ foo: { type: 'string' } });
         done();
       });
 
-      legacyLauncher._propertySheetSchema.set({ foo: 'bar' });
+      legacyLauncher._propertySheetSchema.set({ foo: { type: 'string' } });
+    });
+
+    it('setPropertySheetAttributes with validators omits validators', function(done){
+      launcher.addEventListener('setPropertySheetAttributes', function(evt){
+        expect(evt.detail.foo).not.to.include.keys('validators');
+        done();
+      });
+
+      legacyLauncher._propertySheetSchema.set({ foo: { type: 'string', validators: [function(){}] }});
     });
 
     it('setEmpty', function(done){
