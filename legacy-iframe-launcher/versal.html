@@ -39,6 +39,22 @@ player.on('environmentChanged', function(env){
   launcher.addEventListener('setLearnerState', function(evt){
     player.setLearnerState(evt.detail);
   });
+
+  launcher.addEventListener('setPropertySheetAttributes', function(evt){
+    player.setPropertySheetAttributes(evt.detail);
+  });
+
+  launcher.addEventListener('setEmpty', function(evt){
+    window.parent.postMessage({ event: 'setEmpty' }, '*');
+  });
+
+  launcher.addEventListener('changeBlocking', function(evt){
+    window.parent.postMessage({ event: 'changeBlocking' }, '*');
+  });
+
+  launcher.addEventListener('selectAsset', function(evt){
+    player.requestAsset({ type: evt.detail.type }, evt.detail.success);
+  });
 });
 
 player.on('attributesChanged', function(attributes){

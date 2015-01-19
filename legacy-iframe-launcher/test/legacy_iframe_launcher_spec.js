@@ -161,4 +161,44 @@ describe('legacy iframe launcher', function(){
     });
   });
 
+  describe('some other APIs', function(){
+    it('setPropertySheetAttributes', function(done){
+      launcher.addEventListener('setPropertySheetAttributes', function(evt){
+        expect(evt.detail).to.eql({ foo: 'bar' });
+        done();
+      });
+
+      legacyLauncher._propertySheetSchema.set({ foo: 'bar' });
+    });
+
+    it('setEmpty', function(done){
+      launcher.addEventListener('setEmpty', function(){
+        done();
+      });
+
+      legacyLauncher.playerInterface.trigger('configEmpty');
+    });
+
+    it('blockingChanged', function(done){
+      launcher.addEventListener('changeBlocking', function(){
+        done();
+      });
+
+      legacyLauncher.playerInterface.trigger('blocking:changed');
+    });
+
+    it('select asset', function(done){
+      legacyLauncher.playerInterface.trigger('asset:select', {
+        type: 'image',
+        success: function(){ done(); }
+      });
+
+      launcher.addEventListener('requestAsset', function(evt){
+        // When a user uploads an asset, asset json is passed back in attribute named "__asset__"
+        var config = {};
+        config[evt.detail.attribute] = { location: 'some/url' };
+        launcher.setAttribute('data-config', JSON.stringify(config));
+      })
+    });
+  });
 });
