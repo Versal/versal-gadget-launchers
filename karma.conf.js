@@ -36,7 +36,6 @@ module.exports = function(config) {
       {pattern: 'versal-gadget-launchers/legacy-launcher/test_gadget/gadget.js', included: false},
       'versal-gadget-launchers/legacy-launcher/legacy-launcher.html',
       {pattern: 'versal-gadget-launchers/legacy-launcher/legacy-launcher.js', included: false},
-      {pattern: 'versal-gadget-launchers/legacy-launcher/legacy-launcher.css', included: false},
       'versal-gadget-launchers/legacy-launcher/legacy-launcher_spec.js'
     ],
     reporters: ['dots'],

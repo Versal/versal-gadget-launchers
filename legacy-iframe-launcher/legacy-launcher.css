@@ -1,3 +1,21 @@
+html {
+  overflow: hidden;
+}
+body {
+  overflow: hidden;
+  font: 14px 'AvenirNextLTPro-Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  word-wrap: break-word;
+  color: #7c7975;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+p {
+  font-family: Georgia;
+  color: #7c7975;
+  font-size: 16px;
+}
 img {
   max-width: 100%;
   height: auto;
@@ -6312,15 +6330,6 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-}
-body {
-  font: 12px 'AvenirNextLTPro-Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  word-wrap: break-word;
-  color: #7c7975;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 }
 .versal-player {
   overflow: hidden;
