@@ -78,12 +78,12 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     // These attributes will be set before this element is attached.
     gadgetBaseUrl: {
       get: function() {
-        return this.getAttribute("gadget-base-url") || "";
+        return this.env.baseUrl;
       }
     },
     gadgetCssClassName: {
       get: function() {
-        return this.getAttribute("gadget-css-class-name") || "";
+        return this.env.cssClassName;
       }
     },
     editable: {
@@ -93,7 +93,7 @@ require(['cdn.underscore', 'cdn.backbone', 'cdn.jquery'], function(_, Backbone, 
     },
     editingAllowed: {
       get: function() {
-        return this.getAttribute("editing-allowed") == 'true';
+        return this.env.editingAllowed;
       }
     },
     shouldFireCloseEventOnDetached: {
