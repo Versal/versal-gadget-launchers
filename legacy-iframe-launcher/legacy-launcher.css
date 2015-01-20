@@ -2,15 +2,19 @@ html {
   overflow: hidden;
 }
 body {
+  margin: 0;
   overflow: hidden;
   font: 14px 'AvenirNextLTPro-Regular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   word-wrap: break-word;
   color: #7c7975;
+  background-color: #ffffff;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  line-height: 28px;
 }
+
 p {
   font-family: Georgia;
   color: #7c7975;
@@ -336,14 +340,6 @@ textarea {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-}
-body {
-  margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
-  color: #333333;
-  background-color: #ffffff;
 }
 a {
   color: #0088cc;
