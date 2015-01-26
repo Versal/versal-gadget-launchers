@@ -5,7 +5,6 @@ module.exports = function(config) {
     files: [
       'customevent-polyfill/customevent-polyfill.min.js',
       'webcomponentsjs/webcomponents-lite.min.js',
-      'eventEmitter/EventEmitter.js',
 
       // Iframe launcher
       'versal-gadget-launchers/iframe-launcher/iframe-launcher.html',
