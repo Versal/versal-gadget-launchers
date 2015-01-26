@@ -35,7 +35,7 @@ describe('legacy iframe launcher', function(){
   });
 
   it('creates legacy launcher behind the scenes', function(){
-    expect(legacyLauncher).to.exist();
+    expect(legacyLauncher).to.exist;
   });
 
   it('legacy launcher has all the required attributes', function(){
