@@ -21,7 +21,6 @@
     "requirejs": "2.1.6",
     "customevent-polyfill": "~1.0.0",
     "versal-gadget-api": "~0.0.8",
-    "eventEmitter": "~4.2.11",
     "fontawesome": "~3.2.1"
   }
 }
