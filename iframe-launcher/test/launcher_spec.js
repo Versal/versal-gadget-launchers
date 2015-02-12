@@ -51,6 +51,25 @@ describe('iframe launcher', function() {
       };
     });
 
+    it('sends a bunch of initial events every time it receives startListening', function(done) {
+      var recordedEvents = [];
+
+      // Simulate detaching and attaching iframe, for example, when moving slides in slideshow
+      setTimeout(function(){
+        launcher.children[0].contentWindow.sendGadgetEvent({event: 'startListening'});
+      }, 100);
+
+      window.recordPlayerEvent = function(eventMessage) {
+        recordedEvents.push(eventMessage);
+
+        if(recordedEvents.length == 8) {
+          delete window.recordPlayerEvent;
+          done();
+        }
+      };
+    });
+
+
     it('sends attributesChanged when data-config changes', function(done) {
       window.recordPlayerEvent = function(eventMessage) {
         if (eventMessage.event == 'editableChanged') {
