@@ -93,6 +93,10 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
+  this._reset();
+};
+
+prototype._reset = function(){
   this._previousMessages = {};
   window.clearTimeout(this._attributesChangedTimeout);
   window.clearTimeout(this._learnerStateChangedTimeout);
@@ -161,6 +165,7 @@ prototype.fireCustomEvent = function(eventName, data, options) {
 
 prototype.messageHandlers = {
   startListening: function(){
+    this._reset();
     this._listening = true;
     this.sendMessage('environmentChanged', this.env);
     this.sendMessage('attributesChanged', this.config);
