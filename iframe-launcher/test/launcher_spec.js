@@ -331,7 +331,7 @@ describe('iframe launcher', function() {
     });
 
     it('passes on some events that are handled by the player', function(done) {
-      eventList = ['setPropertySheetAttributes', 'setEmpty', 'track', 'changeBlocking', 'requestAsset'];
+      eventList = ['setPropertySheetAttributes', 'setEmpty', 'track', 'changeBlocking'];
       eventsFired = 0;
       eventList.forEach(function(eventName) {
         // count every event being fired, until we've had them all

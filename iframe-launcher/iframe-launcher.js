@@ -3,6 +3,72 @@ var Semver = function(ver) {
   return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
 };
 
+var getOrInsertFileInput = function() {
+  if (document.getElementById('asset-input')) {
+    return document.getElementById('asset-input');
+  }
+
+  var assetInput = document.createElement('input');
+
+  assetInput.type = 'file';
+  assetInput.style.display = 'none';
+  assetInput.id = 'asset-input';
+
+  // Stop event propagation to make sure we don't set editable state to false
+  //  - when we click on the input[type="file"]
+  assetInput.onclick = function(event) {
+    event.stopPropagation();
+  };
+
+  document.body.appendChild(assetInput);
+  return assetInput;
+};
+
+var postAsset = function(url, sessionId, assetData, callback) {
+  var request = new XMLHttpRequest();
+
+  var formData = new FormData();
+  Object.keys(assetData).forEach(function(key) {
+    if (key === 'tags') {
+      formData.append(key, JSON.stringify(assetData[key]));
+    } else {
+      formData.append(key, assetData[key]);
+    }
+  });
+
+  request.onreadystatechange = function() {
+    if (request.readyState == 4) {
+      if (request.status == 201) {
+        return callback(null, JSON.parse(request.responseText));
+      } else {
+        return callback(request.status);
+      }
+    }
+  };
+
+  request.open('POST', url + '/assets', true);
+  request.setRequestHeader('SID', sessionId);
+  request.send(formData);
+};
+
+var serializeFile = function(file, type) {
+  var fileNameSplit = file.name.split('.'),
+      extension     = fileNameSplit[fileNameSplit.length - 1],
+      contentType   = file.type || type + '/x-' + extension;
+
+  // TODO: check if type is supported
+
+  var attributes = {
+    title:        'New File',
+    type:         type,
+    tags:         [type],
+    content:      file,
+    contentType:  contentType
+  };
+
+  return attributes;
+};
+
 var patch = function(to, from) {
   if(from) {
     Object.keys(from).forEach(function(key){
@@ -215,7 +281,31 @@ prototype.messageHandlers = {
   setPropertySheetAttributes: function(data) { this.fireCustomEvent('setPropertySheetAttributes', data); },
   track: function(data) { this.fireCustomEvent('track', data, {bubbles: true}); },
   error: function(data) { this.fireCustomEvent('error', data, {bubbles: true}); },
-  requestAsset: function(data) { this.fireCustomEvent('requestAsset', data); },
+  requestAsset: function(data) {
+    // TODO support other updload types
+    if (data.type != 'image') {
+      this.fireCustomEvent('requestAsset', data);
+      return;
+    }
+    var apiUrl      = this.env.apiUrl,
+        sessionId   = this.env.sessionId,
+        assetInput  = getOrInsertFileInput();
+
+    assetInput.click();
+
+    var that = this;
+    assetInput.onchange = function(e) {
+      if (e && e.target && e.target.files && e.target.files[0]) {
+        // TODO save type
+        var serializedFile = serializeFile(e.target.files[0], 'image');
+        postAsset(apiUrl, sessionId, serializedFile, function(status, assetJson) {
+          var assetAttributes = {};
+          assetAttributes[data.attribute] = assetJson;
+          that.sendMessage('attributesChanged', assetAttributes);
+        });
+      }
+    };
+  },
 
   // Soon to be deprecated in favour of in-iframe APIs
   // E.g. https://github.com/Versal/challenges-js-api/
