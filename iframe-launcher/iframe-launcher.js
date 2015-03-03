@@ -1,6 +1,12 @@
+var SUPPORTED_IMAGE_TYPES = ['jpg','jpeg','png','gif'];
+
 var Semver = function(ver) {
   var segs = ver.split('.');
   return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
+};
+
+var isValidFileType = function(extension) {
+  return SUPPORTED_IMAGE_TYPES.indexOf(extension) >= 0;
 };
 
 var getOrInsertFileInput = function() {
@@ -20,7 +26,6 @@ var getOrInsertFileInput = function() {
     event.stopPropagation();
   };
 
-  document.body.appendChild(assetInput);
   return assetInput;
 };
 
@@ -41,7 +46,7 @@ var postAsset = function(url, sessionId, assetData, callback) {
       if (request.status == 201) {
         return callback(null, JSON.parse(request.responseText));
       } else {
-        return callback(request.status);
+        return callback(new Error('Something went wrong when uploading an asset. please try again'));
       }
     }
   };
@@ -56,7 +61,9 @@ var serializeFile = function(file, type) {
       extension     = fileNameSplit[fileNameSplit.length - 1],
       contentType   = file.type || type + '/x-' + extension;
 
-  // TODO: check if type is supported
+  if (!isValidFileType(extension)) {
+    return console.warn('invalid file type:', extension);
+  }
 
   var attributes = {
     title:        'New File',
@@ -283,7 +290,7 @@ prototype.messageHandlers = {
   error: function(data) { this.fireCustomEvent('error', data, {bubbles: true}); },
   requestAsset: function(data) {
     // TODO support other updload types
-    if (data.type != 'image') {
+    if (data.type == 'video') {
       this.fireCustomEvent('requestAsset', data);
       return;
     }
@@ -291,15 +298,19 @@ prototype.messageHandlers = {
         sessionId   = this.env.sessionId,
         assetInput  = getOrInsertFileInput();
 
+    assetInput = this.appendChild(assetInput);
     assetInput.click();
 
     var that = this;
     assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
+        var serializedFile = serializeFile(e.target.files[0], 'image');
+
+        if (!serializeFile) {
+          return;
+        }
         // To patch attributesChanged if author toggles out of gadget editing
         that.uploadingAsset = true;
-
-        var serializedFile = serializeFile(e.target.files[0], 'image');
 
         var loadingOverlay;
         if (document.querySelector('.asset-loading-overlay')) {
@@ -313,11 +324,15 @@ prototype.messageHandlers = {
         that.appendChild(loadingOverlay);
 
         loadingOverlay.className = 'asset-loading-overlay';
-        postAsset(apiUrl, sessionId, serializedFile, function(status, assetJson) {
+        postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
+          loadingOverlay.className = 'asset-loading-overlay hidden';
+          if (error) {
+            return alert(error.message);
+          }
+
           var assetAttributes = {};
           assetAttributes[data.attribute] = assetJson;
           that.sendMessage('attributesChanged', assetAttributes);
-          loadingOverlay.className = 'asset-loading-overlay hidden';
 
           // After a period of time allotted to communicate the change to 'attributesChanged'
           // set uploadingAsset to false
