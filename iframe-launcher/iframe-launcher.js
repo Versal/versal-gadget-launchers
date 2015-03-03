@@ -3,6 +3,9 @@ var Semver = function(ver) {
   return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
 };
 
+var getOrInsertLoadingOverlay = function() {
+};
+
 var getOrInsertFileInput = function() {
   if (document.getElementById('asset-input')) {
     return document.getElementById('asset-input');
@@ -298,10 +301,24 @@ prototype.messageHandlers = {
       if (e && e.target && e.target.files && e.target.files[0]) {
         // TODO save type
         var serializedFile = serializeFile(e.target.files[0], 'image');
+
+        var loadingOverlay;
+        if (document.querySelector('.asset-loading-overlay')) {
+          loadingOverlay = document.querySelector('.asset-loading-overlay');
+        }
+
+        var loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'asset-loading-overlay';
+        loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
+
+        that.appendChild(loadingOverlay);
+
+        loadingOverlay.className = 'asset-loading-overlay';
         postAsset(apiUrl, sessionId, serializedFile, function(status, assetJson) {
           var assetAttributes = {};
           assetAttributes[data.attribute] = assetJson;
           that.sendMessage('attributesChanged', assetAttributes);
+          loadingOverlay.className = 'asset-loading-overlay hidden';
         });
       }
     };
