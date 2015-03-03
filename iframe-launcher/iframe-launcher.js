@@ -3,9 +3,6 @@ var Semver = function(ver) {
   return { major: (segs[0] || 0), minor: (segs[1] || 0), patch: (segs[2] || 0), version: ver };
 };
 
-var getOrInsertLoadingOverlay = function() {
-};
-
 var getOrInsertFileInput = function() {
   if (document.getElementById('asset-input')) {
     return document.getElementById('asset-input');
@@ -251,7 +248,7 @@ prototype.messageHandlers = {
   },
 
   setAttributes: function(data){
-    if(!this.editable) {
+    if(!this.editable && !this.uploadingAsset) {
       console.warn('Unable to setAttributes in the read-only state');
       return;
     }
@@ -299,7 +296,9 @@ prototype.messageHandlers = {
     var that = this;
     assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
-        // TODO save type
+        // To patch attributesChanged if author toggles out of gadget editing
+        that.uploadingAsset = true;
+
         var serializedFile = serializeFile(e.target.files[0], 'image');
 
         var loadingOverlay;
@@ -319,6 +318,10 @@ prototype.messageHandlers = {
           assetAttributes[data.attribute] = assetJson;
           that.sendMessage('attributesChanged', assetAttributes);
           loadingOverlay.className = 'asset-loading-overlay hidden';
+
+          // After a period of time allotted to communicate the change to 'attributesChanged'
+          // set uploadingAsset to false
+          setTimeout(function() { that.uploadingAsset = false; }, 1000)
         });
       }
     };
