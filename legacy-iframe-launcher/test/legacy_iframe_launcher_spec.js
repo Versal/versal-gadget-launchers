@@ -198,7 +198,7 @@ describe('legacy iframe launcher', function(){
 
     it('select asset', function(done){
       legacyLauncher.playerInterface.trigger('asset:select', {
-        type: 'image',
+        type: 'video',
         success: function(){ done(); }
       });
 
