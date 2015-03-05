@@ -256,6 +256,9 @@ prototype.uploadAssetAndSetAttributes = function(data, file) {
 
   if (!serializedFile) { return; }
 
+  // To patch attributesChanged if author toggles out of gadget editing
+  this.uploadingAsset = true;
+
   this.loadingOverlay.className = 'asset-loading-overlay';
 
   postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
@@ -264,15 +267,13 @@ prototype.uploadAssetAndSetAttributes = function(data, file) {
       return alert(error.message);
     }
 
-    var assetAttributes = {};
+    assetAttributes = {};
     assetAttributes[data.attribute] = assetJson;
 
-    var config = this.readAttributeAsJson('data-config');
-    patch(config, data);
-    this.setAttribute('data-config', JSON.stringify(config));
-
-    // Player needs those events, until we have mutation observers in place
-    this.fireCustomEvent('setAttributes', config);
+    this.sendMessage('attributesChanged', assetAttributes);
+    // After a period of time allotted to communicate the change to 'attributesChanged'		
+    // set uploadingAsset to false		
+    setTimeout(function() { this.uploadingAsset = false; }.bind(this), 1000)
   }.bind(this));
 };
 
@@ -295,7 +296,7 @@ prototype.messageHandlers = {
   },
 
   setAttributes: function(data){
-    if(!this.editable) {
+    if(!this.editable && !this.uploadingAsset) {
       console.warn('Unable to setAttributes in the read-only state');
       return;
     }
