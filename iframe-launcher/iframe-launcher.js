@@ -9,7 +9,7 @@ var isValidFileType = function(extension) {
   return SUPPORTED_IMAGE_TYPES.indexOf(extension) >= 0;
 };
 
-var getOrInsertFileInput = function() {
+var getOrCreateAssetInput = function() {
   if (document.getElementById('asset-input')) {
     return document.getElementById('asset-input');
   }
@@ -27,6 +27,20 @@ var getOrInsertFileInput = function() {
   };
 
   return assetInput;
+};
+
+var getOrCreateLoadingOverlay = function() {
+  var loadingOverlay;
+  if (document.querySelector('.asset-loading-overlay')) {
+    loadingOverlay = document.querySelector('.asset-loading-overlay');
+  } else {
+    var loadingOverlay = document.createElement('div');
+    loadingOverlay.className = 'asset-loading-overlay';
+    loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
+
+    loadingOverlay.className = 'asset-loading-overlay hidden';
+  }
+  return loadingOverlay;
 };
 
 var postAsset = function(url, sessionId, assetData, callback) {
@@ -162,6 +176,12 @@ prototype.attachedCallback = function(){
   this.iframe.setAttribute('allowfullscreen', 'allowfullscreen');
 
   this.appendChild(this.iframe);
+
+  this.assetInput      = getOrCreateAssetInput();
+  this.loadingOverlay  = getOrCreateLoadingOverlay();
+
+  this.appendChild(this.assetInput);
+  this.appendChild(this.loadingOverlay);
 };
 
 prototype.detachedCallback = function(){
@@ -236,6 +256,33 @@ prototype.fireCustomEvent = function(eventName, data, options) {
   this.dispatchEvent(evt);
 };
 
+prototype.uploadAssetAndSetAttributes = function(data, file) {
+  var apiUrl      = this.env.apiUrl,
+      sessionId   = this.env.sessionId,
+      serializedFile = serializeFile(file, 'image');
+
+  if (!serializedFile) { return; }
+
+  // To patch attributesChanged if author toggles out of gadget editing
+  this.uploadingAsset = true;
+  this.loadingOverlay.className = 'asset-loading-overlay';
+
+  postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
+    this.loadingOverlay.className = 'asset-loading-overlay hidden';
+    if (error) {
+      return alert(error.message);
+    }
+
+    var assetAttributes = {};
+    assetAttributes[data.attribute] = assetJson;
+    this.sendMessage('attributesChanged', assetAttributes);
+
+    // After a period of time allotted to communicate the change to 'attributesChanged'
+    // set uploadingAsset to false
+    setTimeout(function() { this.uploadingAsset = false; }.bind(this), 1000)
+  }.bind(this));
+};
+
 prototype.messageHandlers = {
   startListening: function(){
     this._reset();
@@ -291,55 +338,15 @@ prototype.messageHandlers = {
   requestAsset: function(data) {
     // TODO support other updload types
     if (data.type == 'video') {
-      this.fireCustomEvent('requestAsset', data);
-      return;
+      return this.fireCustomEvent('requestAsset', data);
     }
-    var apiUrl      = this.env.apiUrl,
-        sessionId   = this.env.sessionId,
-        assetInput  = getOrInsertFileInput();
 
-    assetInput = this.appendChild(assetInput);
-    assetInput.click();
-
-    var that = this;
-    assetInput.onchange = function(e) {
+    this.assetInput.click();
+    this.assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
-        var serializedFile = serializeFile(e.target.files[0], 'image');
-
-        if (!serializeFile) {
-          return;
-        }
-        // To patch attributesChanged if author toggles out of gadget editing
-        that.uploadingAsset = true;
-
-        var loadingOverlay;
-        if (document.querySelector('.asset-loading-overlay')) {
-          loadingOverlay = document.querySelector('.asset-loading-overlay');
-        }
-
-        var loadingOverlay = document.createElement('div');
-        loadingOverlay.className = 'asset-loading-overlay';
-        loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
-
-        that.appendChild(loadingOverlay);
-
-        loadingOverlay.className = 'asset-loading-overlay';
-        postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
-          loadingOverlay.className = 'asset-loading-overlay hidden';
-          if (error) {
-            return alert(error.message);
-          }
-
-          var assetAttributes = {};
-          assetAttributes[data.attribute] = assetJson;
-          that.sendMessage('attributesChanged', assetAttributes);
-
-          // After a period of time allotted to communicate the change to 'attributesChanged'
-          // set uploadingAsset to false
-          setTimeout(function() { that.uploadingAsset = false; }, 1000)
-        });
+        this.uploadAssetAndSetAttributes(data, e.target.files[0]);
       }
-    };
+    }.bind(this);
   },
 
   // Soon to be deprecated in favour of in-iframe APIs
