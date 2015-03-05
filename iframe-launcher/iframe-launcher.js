@@ -28,7 +28,7 @@ var createAssetInput = function() {
 var createLoadingOverlay = function() {
   var loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'asset-loading-overlay';
-  loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
+  loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Uploading asset...</div>';
 
   loadingOverlay.className = 'asset-loading-overlay hidden';
   return loadingOverlay;
