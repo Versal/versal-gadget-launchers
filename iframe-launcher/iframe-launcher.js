@@ -70,10 +70,10 @@ var postAsset = function(url, sessionId, assetData, callback) {
   request.send(formData);
 };
 
-var serializeFile = function(file, type) {
+var serializeFile = function(file) {
   var fileNameSplit = file.name.split('.'),
       extension     = fileNameSplit[fileNameSplit.length - 1],
-      contentType   = file.type || type + '/x-' + extension;
+      contentType   = file.type || 'image/x-' + extension;
 
   if (!isValidFileType(extension)) {
     return console.warn('invalid file type:', extension);
@@ -81,8 +81,8 @@ var serializeFile = function(file, type) {
 
   var attributes = {
     title:        'New File',
-    type:         type,
-    tags:         [type],
+    type:         'image',
+    tags:         ['image'],
     content:      file,
     contentType:  contentType
   };
@@ -186,6 +186,8 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
+  this.removeChild(this.assetInput);
+  this.removeChild(this.loadingOverlay);
   this._reset();
 };
 
@@ -259,12 +261,10 @@ prototype.fireCustomEvent = function(eventName, data, options) {
 prototype.uploadAssetAndSetAttributes = function(data, file) {
   var apiUrl      = this.env.apiUrl,
       sessionId   = this.env.sessionId,
-      serializedFile = serializeFile(file, 'image');
+      serializedFile = serializeFile(file);
 
   if (!serializedFile) { return; }
 
-  // To patch attributesChanged if author toggles out of gadget editing
-  this.uploadingAsset = true;
   this.loadingOverlay.className = 'asset-loading-overlay';
 
   postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
@@ -275,11 +275,13 @@ prototype.uploadAssetAndSetAttributes = function(data, file) {
 
     var assetAttributes = {};
     assetAttributes[data.attribute] = assetJson;
-    this.sendMessage('attributesChanged', assetAttributes);
 
-    // After a period of time allotted to communicate the change to 'attributesChanged'
-    // set uploadingAsset to false
-    setTimeout(function() { this.uploadingAsset = false; }.bind(this), 1000)
+    var config = this.readAttributeAsJson('data-config');
+    patch(config, data);
+    this.setAttribute('data-config', JSON.stringify(config));
+
+    // Player needs those events, until we have mutation observers in place
+    this.fireCustomEvent('setAttributes', config);
   }.bind(this));
 };
 
@@ -302,7 +304,7 @@ prototype.messageHandlers = {
   },
 
   setAttributes: function(data){
-    if(!this.editable && !this.uploadingAsset) {
+    if(!this.editable) {
       console.warn('Unable to setAttributes in the read-only state');
       return;
     }
