@@ -9,11 +9,7 @@ var isValidFileType = function(extension) {
   return SUPPORTED_IMAGE_TYPES.indexOf(extension) >= 0;
 };
 
-var getOrCreateAssetInput = function() {
-  if (document.getElementById('asset-input')) {
-    return document.getElementById('asset-input');
-  }
-
+var createAssetInput = function() {
   var assetInput = document.createElement('input');
 
   assetInput.type = 'file';
@@ -29,17 +25,12 @@ var getOrCreateAssetInput = function() {
   return assetInput;
 };
 
-var getOrCreateLoadingOverlay = function() {
-  var loadingOverlay;
-  if (document.querySelector('.asset-loading-overlay')) {
-    loadingOverlay = document.querySelector('.asset-loading-overlay');
-  } else {
-    var loadingOverlay = document.createElement('div');
-    loadingOverlay.className = 'asset-loading-overlay';
-    loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
+var createLoadingOverlay = function() {
+  var loadingOverlay = document.createElement('div');
+  loadingOverlay.className = 'asset-loading-overlay';
+  loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Loading...</div>';
 
-    loadingOverlay.className = 'asset-loading-overlay hidden';
-  }
+  loadingOverlay.className = 'asset-loading-overlay hidden';
   return loadingOverlay;
 };
 
@@ -177,8 +168,8 @@ prototype.attachedCallback = function(){
 
   this.appendChild(this.iframe);
 
-  this.assetInput      = getOrCreateAssetInput();
-  this.loadingOverlay  = getOrCreateLoadingOverlay();
+  this.assetInput      = createAssetInput();
+  this.loadingOverlay  = createLoadingOverlay();
 
   this.appendChild(this.assetInput);
   this.appendChild(this.loadingOverlay);
