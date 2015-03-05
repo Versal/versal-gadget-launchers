@@ -46,7 +46,7 @@ var postAsset = function(url, sessionId, assetData, callback) {
     }
   });
 
-  request.onreadystatechange = function() {
+  request.onload = function() {
     if (request.readyState == 4) {
       if (request.status == 201) {
         return callback(null, JSON.parse(request.responseText));
