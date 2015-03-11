@@ -27,10 +27,9 @@ var createAssetInput = function() {
 
 var createLoadingOverlay = function() {
   var loadingOverlay = document.createElement('div');
-  loadingOverlay.className = 'asset-loading-overlay';
+  loadingOverlay.className = 'asset-loading-overlay hidden';
   loadingOverlay.innerHTML = '<div class="asset-loading-indicator">Uploading asset...</div>';
 
-  loadingOverlay.className = 'asset-loading-overlay hidden';
   return loadingOverlay;
 };
 
@@ -273,7 +272,7 @@ prototype.uploadAssetAndSetAttributes = function(data, file) {
     this.sendMessage('attributesChanged', assetAttributes);
     // After a period of time allotted to communicate the change to 'attributesChanged'		
     // set uploadingAsset to false		
-    setTimeout(function() { this.uploadingAsset = false; }.bind(this), 1000)
+    setTimeout(function() { this.uploadingAsset = false; }.bind(this), 1000);
   }.bind(this));
 };
 
