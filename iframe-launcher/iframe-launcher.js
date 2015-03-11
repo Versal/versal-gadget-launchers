@@ -25,6 +25,17 @@ var createAssetInput = function() {
   return assetInput;
 };
 
+var createAssetDropzone = function() {
+  var assetDropzone = document.createElement('div');
+  var innerHTML = '<div class="dropzone-dialog"><div class="dropzone-prompt">drag file or click to upload...</div>';
+  innerHTML += '<div class="dropzone-cancel-dialog">click to cancel</div></div>';
+
+  assetDropzone.innerHTML = innerHTML;
+  assetDropzone.className = 'asset-dropzone hidden';
+
+  return assetDropzone;
+};
+
 var createLoadingOverlay = function() {
   var loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'asset-loading-overlay hidden';
@@ -167,16 +178,19 @@ prototype.attachedCallback = function(){
 
   this.appendChild(this.iframe);
 
-  this.assetInput      = createAssetInput();
-  this.loadingOverlay  = createLoadingOverlay();
+  this.assetInput     = createAssetInput();
+  this.loadingOverlay = createLoadingOverlay();
+  this.assetDropzone  = createAssetDropzone();
 
   this.appendChild(this.assetInput);
+  this.appendChild(this.assetDropzone);
   this.appendChild(this.loadingOverlay);
 };
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
   this.removeChild(this.assetInput);
+  this.removeChild(this.assetDropzone);
   this.removeChild(this.loadingOverlay);
   this._reset();
 };
@@ -258,6 +272,7 @@ prototype.uploadAssetAndSetAttributes = function(data, file) {
   // To patch attributesChanged if author toggles out of gadget editing
   this.uploadingAsset = true;
 
+  this.assetDropzone.className  = 'asset-dropzone hidden';
   this.loadingOverlay.className = 'asset-loading-overlay';
 
   postAsset(apiUrl, sessionId, serializedFile, function(error, assetJson) {
@@ -334,7 +349,27 @@ prototype.messageHandlers = {
       return this.fireCustomEvent('requestAsset', data);
     }
 
-    this.assetInput.click();
+    this.assetDropzone.className = 'asset-dropzone';
+    this.assetDropzone.onclick = function() {
+      this.assetInput.click();
+    }.bind(this);
+    var handleDragOver = function(evt) {
+      evt.stopPropagation();
+      evt.preventDefault();
+      evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+    };
+
+    this.assetDropzone.addEventListener('dragover', handleDragOver, false);
+    this.assetDropzone.addEventListener('drop', function(event) {
+      event.stopPropagation();
+      event.preventDefault();
+      var dataTransfer = event.dataTransfer;
+
+      if (dataTransfer && dataTransfer.files && dataTransfer.files.length) {
+        this.uploadAssetAndSetAttributes(data, dataTransfer.files[0]);
+      }
+    }.bind(this), false);
+
     this.assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
         this.uploadAssetAndSetAttributes(data, e.target.files[0]);
