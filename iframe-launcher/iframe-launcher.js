@@ -285,6 +285,21 @@ prototype.onDropAssetDropzone = function(data, event) {
   }
 };
 
+prototype.setupDropzoneHandlers = function(requestData) {
+  this.assetDropzone.onclick = function() {
+    this.assetInput.click();
+  }.bind(this);
+
+  this.querySelector('.dropzone-cancel-dialog').onclick = function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.hideAssetDropzone();
+  }.bind(this);
+
+  this.assetDropzone.addEventListener('dragover', onDragOverDropzone, false);
+  this.assetDropzone.addEventListener('drop', this.onDropAssetDropzone.bind(this, requestData), false);
+};
+
 prototype.uploadAssetAndSetAttributes = function(data, file) {
   var apiUrl      = this.env.apiUrl,
       sessionId   = this.env.sessionId,
@@ -373,17 +388,7 @@ prototype.messageHandlers = {
     }
 
     this.assetDropzone.className = 'asset-dropzone';
-    this.assetDropzone.onclick = function() {
-      this.assetInput.click();
-    }.bind(this);
-
-    this.querySelector('.dropzone-cancel-dialog').onclick = function(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      this.hideAssetDropzone();
-    }.bind(this);
-    this.assetDropzone.addEventListener('dragover', onDragOverDropzone, false);
-    this.assetDropzone.addEventListener('drop', this.onDropAssetDropzone.bind(this, data), false);
+    this.setupDropzoneHandlers(data);
 
     this.assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
