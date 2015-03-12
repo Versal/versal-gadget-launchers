@@ -211,12 +211,10 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
-      this.assetDropzone.className = 'asset-dropzone hidden';
-      this.assetDropzone.removeEventListener('drop', this.onDropAssetDropzone);
-      this.assetDropzone.removeEventListener('dragover', onDragOverDropzone);
       if(this.apiVersion.minor < 1) {
         this.sendMessage('setEditable', { editable: this.editable });
       }
+      if (this.assetDropzone) { this.hideAssetDropzone(); }
       break;
 
     case 'data-config':
@@ -269,6 +267,12 @@ prototype.fireCustomEvent = function(eventName, data, options) {
   options = options || {};
   var evt = new CustomEvent(eventName, { detail: data, bubbles: options.bubbles || false });
   this.dispatchEvent(evt);
+};
+
+prototype.hideAssetDropzone = function() {
+  this.assetDropzone.className = 'asset-dropzone hidden';
+  this.assetDropzone.removeEventListener('drop', this.onDropAssetDropzone);
+  this.assetDropzone.removeEventListener('dragover', onDragOverDropzone);
 };
 
 prototype.onDropAssetDropzone = function(data, event) {
@@ -373,6 +377,11 @@ prototype.messageHandlers = {
       this.assetInput.click();
     }.bind(this);
 
+    document.querySelector('.dropzone-cancel-dialog').onclick = function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.hideAssetDropzone();
+    }.bind(this);
     this.assetDropzone.addEventListener('dragover', onDragOverDropzone, false);
     this.assetDropzone.addEventListener('drop', this.onDropAssetDropzone.bind(this, data), false);
 
