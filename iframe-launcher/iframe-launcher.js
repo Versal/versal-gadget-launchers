@@ -36,6 +36,12 @@ var createAssetDropzone = function() {
   return assetDropzone;
 };
 
+var onDragOverDropzone = function(evt) {
+  evt.stopPropagation();
+  evt.preventDefault();
+  evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+};
+
 var createLoadingOverlay = function() {
   var loadingOverlay = document.createElement('div');
   loadingOverlay.className = 'asset-loading-overlay hidden';
@@ -205,6 +211,9 @@ prototype.attributeChangedCallback = function(name, oldAttribute, newAttribute){
   switch(name) {
     case 'editable':
       this.sendMessage('editableChanged', { editable: this.editable });
+      this.assetDropzone.className = 'asset-dropzone hidden';
+      this.assetDropzone.removeEventListener('drop', this.onDropAssetDropzone);
+      this.assetDropzone.removeEventListener('dragover', onDragOverDropzone);
       if(this.apiVersion.minor < 1) {
         this.sendMessage('setEditable', { editable: this.editable });
       }
@@ -260,6 +269,16 @@ prototype.fireCustomEvent = function(eventName, data, options) {
   options = options || {};
   var evt = new CustomEvent(eventName, { detail: data, bubbles: options.bubbles || false });
   this.dispatchEvent(evt);
+};
+
+prototype.onDropAssetDropzone = function(data, event) {
+  event.stopPropagation();
+  event.preventDefault();
+  var dataTransfer = event.dataTransfer;
+
+  if (dataTransfer && dataTransfer.files && dataTransfer.files.length) {
+    this.uploadAssetAndSetAttributes(data, dataTransfer.files[0]);
+  }
 };
 
 prototype.uploadAssetAndSetAttributes = function(data, file) {
@@ -353,22 +372,9 @@ prototype.messageHandlers = {
     this.assetDropzone.onclick = function() {
       this.assetInput.click();
     }.bind(this);
-    var handleDragOver = function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-      evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-    };
 
-    this.assetDropzone.addEventListener('dragover', handleDragOver, false);
-    this.assetDropzone.addEventListener('drop', function(event) {
-      event.stopPropagation();
-      event.preventDefault();
-      var dataTransfer = event.dataTransfer;
-
-      if (dataTransfer && dataTransfer.files && dataTransfer.files.length) {
-        this.uploadAssetAndSetAttributes(data, dataTransfer.files[0]);
-      }
-    }.bind(this), false);
+    this.assetDropzone.addEventListener('dragover', onDragOverDropzone, false);
+    this.assetDropzone.addEventListener('drop', this.onDropAssetDropzone.bind(this, data), false);
 
     this.assetInput.onchange = function(e) {
       if (e && e.target && e.target.files && e.target.files[0]) {
