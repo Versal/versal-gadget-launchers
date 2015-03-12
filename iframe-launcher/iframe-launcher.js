@@ -377,7 +377,7 @@ prototype.messageHandlers = {
       this.assetInput.click();
     }.bind(this);
 
-    document.querySelector('.dropzone-cancel-dialog').onclick = function(event) {
+    this.querySelector('.dropzone-cancel-dialog').onclick = function(event) {
       event.preventDefault();
       event.stopPropagation();
       this.hideAssetDropzone();
