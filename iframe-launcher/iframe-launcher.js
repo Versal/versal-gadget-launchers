@@ -27,8 +27,8 @@ var createAssetInput = function() {
 
 var createAssetDropzone = function() {
   var assetDropzone = document.createElement('div');
-  var innerHTML = '<div class="dropzone-dialog"><div class="dropzone-prompt">drag file or click to upload...</div>';
-  innerHTML += '<div class="dropzone-cancel-dialog">click to cancel</div></div>';
+  var innerHTML = '<div class="dropzone-dialog"><div class="dropzone-prompt">Drop file here or click to upload</div>';
+  innerHTML += '<div class="dropzone-cancel-dialog">cancel</div></div>';
 
   assetDropzone.innerHTML = innerHTML;
   assetDropzone.className = 'asset-dropzone hidden';
