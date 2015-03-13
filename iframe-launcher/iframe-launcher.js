@@ -178,7 +178,10 @@ prototype.createdCallback = function() {
 
 prototype.attachedCallback = function(){
   // avoid problems in case attachedCallback is called multiple times while detachedCallback is not called
-  if (this.iframe) return;
+  if (this.iframe) {
+    if (this.iframe.src != this.src) this.iframe.src = this.src;
+    return;
+  }
 
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.src;
