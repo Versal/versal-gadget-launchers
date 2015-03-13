@@ -177,6 +177,9 @@ prototype.createdCallback = function() {
 };
 
 prototype.attachedCallback = function(){
+  // avoid problems in case attachedCallback is called multiple times while detachedCallback is not called
+  if (this.iframe) return;
+
   this.iframe = document.createElement('iframe');
   this.iframe.src = this.src;
   this.iframe.addEventListener('message', this.handleMessage.bind(this));
@@ -195,6 +198,7 @@ prototype.attachedCallback = function(){
 
 prototype.detachedCallback = function(){
   this.removeChild(this.iframe);
+  this.iframe = null;
   this.removeChild(this.assetInput);
   this.removeChild(this.assetDropzone);
   this.removeChild(this.loadingOverlay);
