@@ -79,10 +79,10 @@ var postAsset = function(url, sessionId, assetData, callback) {
 
 var serializeFile = function(file) {
   var fileNameSplit = file.name.split('.'),
-      extension     = fileNameSplit[fileNameSplit.length - 1],
+      extension     = fileNameSplit[fileNameSplit.length - 1] || '',
       contentType   = file.type || 'image/x-' + extension;
 
-  if (!isValidFileType(extension)) {
+  if (!isValidFileType(extension.toLowerCase())) {
     return console.warn('invalid file type:', extension);
   }
 
