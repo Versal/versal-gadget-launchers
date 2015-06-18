@@ -11,3 +11,9 @@ All code is licensed under the [MIT License](LICENSE), except the fonts in the l
 ## Chrome bug workaround
 
 Normally you can load the launchers using HTML Imports, but since Chrome currently has a [bug in its implementation](https://code.google.com/p/chromium/issues/detail?id=421206) you could also use the JS/CSS files directly.
+
+## Cutting a release
+
+1. Bump the version in `bower.json` and create a pull request
+2. Ensure the repo gets tagged with the new version
+3. Bump the version in player's [bower.json](https://github.com/Versal/player/blob/master/bower.json) and create a pull request
