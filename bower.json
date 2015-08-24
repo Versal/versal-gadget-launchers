@@ -12,15 +12,12 @@
     "package.json"
   ],
   "devDependencies": {
-    "underscore": "~1.6.0",
     "backbone": "1.0.0",
-    "jquery": "~2.1.1",
-    "webcomponentsjs": "~0.5.4"
+    "jquery": "~2.1.1"
   },
   "dependencies": {
     "requirejs": "2.1.6",
     "customevent-polyfill": "~1.0.0",
-    "versal-gadget-api": "~0.0.14",
-    "fontawesome": "~3.2.1"
+    "versal-gadget-api": "~0.0.14"
   }
 }
