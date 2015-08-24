@@ -4,7 +4,7 @@ module.exports = function(config) {
     basePath: '..',
     files: [
       'customevent-polyfill/customevent-polyfill.min.js',
-      'webcomponentsjs/webcomponents-lite.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/0.5.4/webcomponents-lite.min.js',
 
       // Iframe launcher
       'versal-gadget-launchers/iframe-launcher/iframe-launcher.html',
@@ -24,13 +24,12 @@ module.exports = function(config) {
       'versal-gadget-api/versal-player-api.js',
 
       // Legacy launcher
-      'underscore/underscore.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js',
       'backbone/backbone.js',
       'jquery/dist/jquery.js',
       'requirejs/require.js',
       'versal-gadget-launchers/legacy-launcher/test_require_config.js',
       'versal-gadget-launchers/legacy-launcher/cdn-defines.js',
-      {pattern: 'fontawesome/css/font-awesome.min.css', included: false},
       {pattern: 'versal-gadget-launchers/legacy-launcher/test_gadget/gadget.css', included: false},
       {pattern: 'versal-gadget-launchers/legacy-launcher/test_gadget/gadget.js', included: false},
       'versal-gadget-launchers/legacy-launcher/legacy-launcher.html',
