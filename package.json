@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "karma start --browsers Firefox --single-run"
+    "test": "karma start --single-run"
   },
   "devDependencies": {
     "chai": "*",

@@ -1,11 +1,11 @@
 {
-  "name": "versal-gadget-launchers",
+  "name": "versal-legacy-launcher",
   "version": "0.5.22",
   "author": "Versal team <support@versal.com>",
-  "description": "Various launchers for gadgets on versal.com",
+  "description": "A web component for maintaining compatibility with earlier developed gadgets.",
   "main": "index.html",
   "license": "MIT",
-  "homepage": "http://github.com/Versal/versal-gadget-launchers",
+  "homepage": "http://github.com/Versal/versal-legacy-launcher",
   "ignore": [
     "**/.*",
     "node_modules",
