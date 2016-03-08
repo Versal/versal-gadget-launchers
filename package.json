@@ -1,4 +1,10 @@
 {
+  "name": "versal-legacy-launcher",
+  "version": "0.6.0",
+  "author": "Versal team <support@versal.com>",
+  "description": "A web component for maintaining compatibility with earlier developed gadgets.",
+  "license": "MIT",
+  "homepage": "http://github.com/Versal/versal-legacy-launcher",
   "scripts": {
     "test": "karma start --single-run"
   },

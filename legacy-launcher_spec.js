@@ -5,7 +5,7 @@ function createLegacyLauncher(){
     assetUrlTemplate: "http://api/<%= id %>/foo",
     cssClassName: "foo-bar",
     editingAllowed: true,
-    baseUrl: '/base/versal-legacy-launcher/legacy-launcher/test_gadget'
+    baseUrl: '/base/test_gadget'
   }));
   launcher.setAttribute('data-config', '{"test": "initial-config"}');
   launcher.setAttribute('data-userstate', '{"test": "initial-userstate"}');
@@ -48,7 +48,7 @@ describe('Legacy gadget launcher', function() {
 
   it('contains gadgetBaseUrl in gadgetOptions', function() {
     expect(options.project).to.have.property('path');
-    expect(options.project.path('blah')).to.equal('/base/versal-legacy-launcher/legacy-launcher/test_gadget/blah');
+    expect(options.project.path('blah')).to.equal('/base/test_gadget/blah');
   });
 
   describe('receiving launcher events', function() {
