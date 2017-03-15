@@ -52,7 +52,7 @@ After receiving startListening event from the gadget, player responds with the f
 
 ### environmentChanged
 
-Sends environment variables to the gadget once immediately after receiving `startListening` from the gadget.<br/><br/> Currently there is only one environment variable: `assetUrlTemplate` Use this template to obtain asset URL by id.
+Sends environment variables to the gadget once immediately after receiving `startListening` from the gadget.<br/><br/> 
 
 ```
 {
@@ -62,6 +62,11 @@ Sends environment variables to the gadget once immediately after receiving `star
   }
 }
 ```
+
+#### Environment values
+
+* `assetUrlTemplate`: Use this template to obtain asset URL by id
+* `editingAllowed`: Used to determine if the gadget is being used in an editable context
 
 ### attributesChanged
 
